@@ -1,10 +1,10 @@
 #!/bin/sh
-
+set -x
 #
 # basic map-reduce test
 #
 
-RACE=
+RACE=-race
 
 # uncomment this to run the tests with the Go race detector.
 #RACE=-race
@@ -56,7 +56,6 @@ wait
 # to exit when a job is completely finished, and not before,
 # that means the job has finished.
 
-echo "current dir : $(pwd)"
 sort mr-out* | grep . > mr-wc-all
 if cmp mr-wc-all mr-correct-wc.txt
 then

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="428b95ac-c9d1-4caa-b44b-264550ee0976" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
+  <component name="GOROOT" path="D:\Go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1kPohz6H9COlut5c0QJrRylhkE7" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultGoTemplateProperty" value="Go File" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.mappings" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.symlinks" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
+    <property name="configurable.Global.GOPATH.is.expanded" value="true" />
+    <property name="configurable.Module.GOPATH.is.expanded" value="false" />
+    <property name="configurable.Project.GOPATH.is.expanded" value="true" />
+    <property name="go.import.settings.migrated" value="true" />
+    <property name="go.sdk.automatically.set" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../6.824-golabs-2020-yzy" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="settings.editor.selected.configurable" value="com.goide.configuration.GoLibrariesConfigurableProvider" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\distributed_system\6.824\src\mr" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Go Build.go build mrworker.go">
+    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
+      <module name="6.824" />
+      <working_directory value="$PROJECT_DIR$" />
+      <go_parameters value="-i" />
+      <kind value="DIRECTORY" />
+      <filePath value="$PROJECT_DIR$" />
+      <directory value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build mrmaster.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="6.824" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/src/main/mrmaster.go" />
+      <directory value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build mrworker.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="6.824" />
+      <working_directory value="$PROJECT_DIR$" />
+      <parameters value="./wc.so" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/src/main/mrworker.go" />
+      <directory value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Go Build.go build mrmaster.go" />
+      <item itemvalue="Go Build.go build mrworker.go" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Build.go build mrworker.go" />
+        <item itemvalue="Go Build.go build mrmaster.go" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="3278" y="366" key="#Deployment" timestamp="1605880354307">
+      <screen x="3000" y="0" width="2560" height="1409" />
+    </state>
+    <state x="3278" y="366" key="#Deployment/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1605880354307" />
+    <state x="3298" y="460" key="#SSH_Configurations" timestamp="1605880287290">
+      <screen x="3000" y="0" width="2560" height="1409" />
+    </state>
+    <state x="3298" y="460" key="#SSH_Configurations/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1605880287290" />
+    <state x="3949" y="452" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1606035691717">
+      <screen x="3000" y="0" width="2560" height="1409" />
+    </state>
+    <state x="3949" y="452" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1606035691717" />
+    <state x="3093" y="93" width="2375" height="1224" key="DirDiffDialog" timestamp="1605880748004">
+      <screen x="3000" y="0" width="2560" height="1409" />
+    </state>
+    <state x="3093" y="93" width="2375" height="1224" key="DirDiffDialog/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1605880748004" />
+    <state x="531" y="240" key="FileChooserDialogImpl" timestamp="1605837709482">
+      <screen x="0" y="0" width="1500" height="970" />
+    </state>
+    <state x="531" y="240" key="FileChooserDialogImpl/0.0.1500.970@0.0.1500.970" timestamp="1605837709482" />
+    <state width="1297" height="279" key="GridCell.Tab.0.bottom" timestamp="1606046494672">
+      <screen x="3000" y="0" width="2560" height="1409" />
+    </state>
+    <state width="1297" height="279" key="GridCell.Tab.0.bottom/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1606046494672" />
+    <state width="1297" height="279" key="GridCell.Tab.0.center" timestamp="1606046494671">
+      <screen x="3000" y="0" width="2560" height="1409" />
+    </state>
+    <state width="1297" height="279" key="GridCell.Tab.0.center/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1606046494671" />
+    <state width="1297" height="279" key="GridCell.Tab.0.left" timestamp="1606046494671">
+      <screen x="3000" y="0" width="2560" height="1409" />
+    </state>
+    <state width="1297" height="279" key="GridCell.Tab.0.left/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1606046494671" />
+    <state width="1297" height="279" key="GridCell.Tab.0.right" timestamp="1606046494671">
+      <screen x="3000" y="0" width="2560" height="1409" />
+    </state>
+    <state width="1297" height="279" key="GridCell.Tab.0.right/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1606046494671" />
+    <state x="3223" y="460" key="SettingsEditor" timestamp="1606034790169">
+      <screen x="3000" y="0" width="2560" height="1409" />
+    </state>
+    <state x="300" y="126" key="SettingsEditor/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1605612107938" />
+    <state x="3223" y="460" key="SettingsEditor/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1606034790169" />
+    <state x="353" y="161" width="2013" height="1134" key="dock-window-1" timestamp="1605888602503">
+      <screen x="0" y="0" width="2560" height="1409" />
+    </state>
+    <state x="3320" y="169" width="1150" height="956" maximized="true" key="dock-window-1/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1605767898917" />
+    <state x="0" y="0" width="1512" height="1055" key="dock-window-1/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1605879278776" />
+    <state x="353" y="161" width="2013" height="1134" key="dock-window-1/0.0.2560.1409@0.0.2560.1409" timestamp="1605888602503" />
+    <state x="3520" y="375" width="603" height="804" key="find.popup" timestamp="1606097372985">
+      <screen x="3000" y="0" width="2560" height="1409" />
+    </state>
+    <state x="574" y="209" width="564" height="554" key="find.popup/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1605857489546" />
+    <state x="3520" y="375" width="603" height="804" key="find.popup/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1606097372985" />
+    <state x="979" y="303" width="603" height="804" key="find.popup/0.0.2560.1409@0.0.2560.1409" timestamp="1606009190401" />
+    <state x="3551" y="546" key="ftp.server.browser" timestamp="1605879900603">
+      <screen x="3000" y="0" width="2560" height="1409" />
+    </state>
+    <state x="3551" y="546" key="ftp.server.browser/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1605879900603" />
+    <state x="3580" y="707" key="publish.login" timestamp="1605879668768">
+      <screen x="3000" y="0" width="2560" height="1409" />
+    </state>
+    <state x="3580" y="707" key="publish.login/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1605879668768" />
+    <state x="709" y="305" width="1147" height="985" key="search.everywhere.popup" timestamp="1606015021943">
+      <screen x="0" y="0" width="2560" height="1409" />
+    </state>
+    <state x="415" y="210" width="672" height="678" key="search.everywhere.popup/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1605861203001" />
+    <state x="3707" y="304" width="1147" height="985" key="search.everywhere.popup/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1605799826692" />
+    <state x="709" y="305" width="1147" height="985" key="search.everywhere.popup/0.0.2560.1409@0.0.2560.1409" timestamp="1606015021943" />
+  </component>
+</project>

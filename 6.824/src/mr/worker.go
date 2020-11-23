@@ -71,28 +71,30 @@ func ihash(key string) int {
 
 
 func (worker *Worker) doMapTask(task *Task) error{
-	file, err := os.Open(task.fileName)
+	fmt.Printf("worker %v opening file : %v\n", worker.workerId, task.FileName)
+	file, err := os.Open(task.FileName)
 	if err != nil {
-		log.Fatal("cannot open %v", task.fileName)
+		log.Fatal("cannot open %v", task.FileName)
 	}
 	defer file.Close()
 	content, err := ioutil.ReadAll(file)
 	if err != nil {
-		log.Fatal("cannot read %v", task.fileName)
+		log.Fatal("cannot read %v", task.FileName)
 	}
-	inter := worker.mapf(task.fileName, string(content))
-	partitions := make([][]KeyValue, task.nReduce)
+	inter := worker.mapf(task.FileName, string(content))
+	partitions := make([][]KeyValue, task.NReduce)
 
 	for _, kv := range inter {
 		key := kv.Key
 		value := kv.Value
-		bucket := ihash(key) % task.nReduce
+		bucket := ihash(key) % task.NReduce
 		partitions[bucket] = append(partitions[bucket], KeyValue{key, value})
 	}
 
 	for i, par := range partitions {
-		interName := "mr-" + strconv.Itoa(task.imap) + "-" + strconv.Itoa(i)
-		file, err = os.Open(interName)
+		interName := "./mr-" + strconv.Itoa(task.Imap) + "-" + strconv.Itoa(i)
+	//	fmt.Printf("worker %v, saving interfile :%v \n", worker.workerId, interName)
+		file, err = os.Create(interName)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -109,12 +111,13 @@ func (worker *Worker) doMapTask(task *Task) error{
 
 
 func (worker *Worker) doReduceTask(task *Task) error{
-	oName := "mr-out-" + strconv.Itoa(task.iReduce)
+	oName := "mr-out-" + strconv.Itoa(task.IReduce)
+	fmt.Println("***reduce file name*** : " + oName)
 	ofile, _ := os.Create(oName)
 	defer ofile.Close()
 	intermediate := make([]KeyValue, 0)
-	for i := 0; i < task.nMap; i ++ {
-		mName := "mr-" + strconv.Itoa(i) + "-" + strconv.Itoa(task.iReduce)
+	for i := 0; i < task.NMap; i ++ {
+		mName := "mr-" + strconv.Itoa(i) + "-" + strconv.Itoa(task.IReduce)
 		file, err := os.Open(mName)
 		if err != nil {
 			log.Fatal("err in do reduce")
@@ -159,10 +162,10 @@ func (worker *Worker) doReduceTask(task *Task) error{
 
 func (worker *Worker) ReportTask(task *Task) error {
 
-	args := reportArgs{task}
-	reply := reportReply{}
-	if ok := call("Master.ReportMapTask", args, reply); !ok {
-		log.Fatal("error in ReportMapTask rpc")
+	args := ReportArgs{task}
+	reply := ReportReply{}
+	if ok := call("Master.ReportTask", &args, &reply); !ok {
+		log.Fatal("error in ReportTask rpc")
 	}
 	return nil
 }
@@ -181,28 +184,33 @@ func (worker *Worker) ReportTask(task *Task) error {
 
 
 func (worker *Worker) run() {
-	args := TaskArgs{worker.workerId}
-	reply := TaskReply{}
+
 //	cnt := 0
 	for {
-		call("Master.ReqTask", &args, &reply)
+		args := TaskArgs{worker.workerId}
+		reply := TaskReply{}
+		if ok := call("Master.ReqTask", &args, &reply); !ok {
+			log.Fatal("error when requesting rpc")
+		}
 		task := reply.Task
-		state := reply.taskReplyState
+		state := reply.TaskReplyState
+		fmt.Printf("worker %v got a task : %v\t\t%v\n", worker.workerId, state, task)
 		if state == FIN {
 			break
 		} else if state == BARRIER {
-			time.Sleep(time.Second)
+			time.Sleep(2 * time.Second)
 			continue
 		}
-
-		if state == MAP {
+		fmt.Printf("task state : %v, phase : %v\n", state, task.Phase)
+		if state == GOT && task.Phase == "map" {
 			if err := worker.doMapTask(task); err != nil {
 				log.Fatal("err in doMapTask")
 			}
+			fmt.Println("do map finish ")
 			if err := worker.ReportTask(task); err != nil {
 				log.Fatal("err in report")
 			}
-		} else if (state == REDUCE){
+		} else if state == GOT && task.Phase == "reduce" {
 			if err := worker.doReduceTask(task); err != nil {
 				log.Fatal("err in doReduceTask")
 			}
@@ -223,6 +231,7 @@ func (worker *Worker) register() error{
 	if ok := call("Master.WorkerRegister", &args, &reply); !ok {
 		log.Fatal("worker register fail")
 	}
+	worker.workerId = reply.WorkerId
 	return nil
 }
 

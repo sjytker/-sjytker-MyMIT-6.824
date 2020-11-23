@@ -13,18 +13,18 @@ import "time"
 //)
 
 type TaskState struct {
-	status int
-	workerId int
-	startTime time.Time
+	Status int
+	WorkerId int
+	StartTime time.Time
 }
 
 type Task struct {
-	done bool   // all task done?
-	phase string
-	fileName string  // map file name
-	imap int
-	iReduce int   // iReduce
-	nMap int
-	nReduce int		// reduce split num
+	Done bool   // all task done?
+	Phase string
+	FileName string  // map file name
+	Imap int
+	IReduce int   // iReduce
+	NMap int
+	NReduce int		// reduce split num
 }
 

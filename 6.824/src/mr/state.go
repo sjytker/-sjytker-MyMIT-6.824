@@ -14,6 +14,6 @@ const (
 	GOT = 0
 	BARRIER = 1
 	FIN = 2
-	MAP = 3
-	REDUCE = 4
+	//MAP = 3
+	//REDUCE = 4
 )

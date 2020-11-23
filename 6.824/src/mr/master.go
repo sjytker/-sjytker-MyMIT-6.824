@@ -1,7 +1,9 @@
 package mr
 
 import (
+	"fmt"
 	"log"
+	"strings"
 	"sync"
 	"time"
 )
@@ -35,13 +37,9 @@ func NewMaster(files []string, nReduce int) *Master {
 	master.nTask = nTask
 	master.nReduce = nReduce
 	master.files = files
-	max := nTask
 	master.phase = "map"
 	master.allTask = make([]TaskState, nTask, nTask)
-	if nReduce > max {
-		max = nReduce
-	}
-	master.freeTaskQueue = make([]Task, 0, max)
+	master.freeTaskQueue = make([]Task, 0, nTask)
 	for i := 0; i < nTask; i ++ {
 	//	master.freeTaskQueue = append(master.freeTaskQueue, i)
 		master.allTask[i] = TaskState{IDLE, -1, time.Now()}
@@ -49,44 +47,6 @@ func NewMaster(files []string, nReduce int) *Master {
 	return &master
 }
 
-
-// Your code here -- RPC handlers for the worker to call.
-
-//
-// an example RPC handler.
-//
-// the RPC argument and reply types are defined in rpc.go.
-// finish all the map phase, before entering the reduce phase
-func (m *Master) allocateTask(args *TaskArgs, reply *TaskReply) error {
-
-	//for i := 0; i < m.nTask; i ++ {
-	//	if m.mapState[i] == IDLE {
-	//		reply.taskType = "map"
-	//		reply.fileName = m.files[i]
-	//		reply.nReduce = m.nReduce
-	//		reply.mapTaskNum = i
-	//		m.runningWorker[args.workerId] = i
-	//		m.taskStateList[i] = TaskState{IN_PROGRESS, args.workerId, time.Now()}
-	//		break
-	//	} else if m.mapState[i] == IN_PROGRESS {
-	//		reply.taskType = "waiting map"
-	//	}
-	//}
-	//if reply.taskType != "waiting map" {
-	//	for i := 0; i < m.nReduce; i ++ {
-	//		if m.reduceState[i] == IDLE {
-	//			reply.taskType = "reduce"
-	//			reply.reduceTask = i
-	//			break
-	//		} else if m.reduceState[i] == IN_PROGRESS {
-	//			reply.taskType = "waiting reduce"
-	//		}
-	//	}
-	//}
-
-
-	return nil
-}
 
 
 //
@@ -99,6 +59,7 @@ func (m *Master) server() {
 	sockname := masterSock()
 	os.Remove(sockname)
 	l, e := net.Listen("unix", sockname)
+//	l, e := net.Listen("tcp", "localhost:7000")
 	if e != nil {
 		log.Fatal("listen error:", e)
 	}
@@ -110,51 +71,84 @@ func (m *Master) server() {
 // if the entire job has finished.
 //
 func (m *Master) Done() bool {
-	if m.phase == "map" {
-		return false
-	}
-	for i := 0; i < m.nReduce; i ++ {
-		if m.allTask[i].status != COMPLETED {
-			return false
-		}
-	}
-	return true
+	//if m.phase != "reduce_barrier" {
+	//	return false
+	//}
+	//for i := 0; i < m.nReduce; i ++ {
+	//	if m.allTask[i].Status != COMPLETED {
+	//		return false
+	//	}
+	//}
+	return m.phase == "fin"
 }
 
 
 func (m *Master) ReqTask(args *TaskArgs, reply *TaskReply) error {
-	m.mutex.Lock()
-	defer m.mutex.Unlock()
-	if m.phase == "barrier" {
-		reply.taskReplyState = BARRIER
+	//m.mutex.Lock()
+	//defer m.mutex.Unlock()
+	fmt.Println("in master ReqTask,  phase : " , m.phase, ", m.done() : ", m.Done())
+	fmt.Println(m.freeTaskQueue)
+	if m.phase == "map_barrier" || m.phase == "reduce_barrier" {
+		reply.TaskReplyState = BARRIER
+
 	} else if m.phase == "fin" {
-		reply.taskReplyState = FIN
+		reply.TaskReplyState = FIN
 	} else {
-		reply.Task = &m.freeTaskQueue[0]
-		m.freeTaskQueue = m.freeTaskQueue[1:]
+		m.mutex.Lock()
+		defer m.mutex.Unlock()
+		if m.phase == "map" || m.phase == "reduce" {
+			if len(m.freeTaskQueue) == 0 {
+				fmt.Println("no task in queue")
+			} else {
+				fmt.Println("getting from queue : ", m.freeTaskQueue[0])
+				task := &m.freeTaskQueue[0]
+				m.freeTaskQueue = m.freeTaskQueue[1:]
+				if m.phase == "map" {
+					m.allTask[task.Imap].Status = IN_PROGRESS
+				} else {
+					m.allTask[task.IReduce].Status = IN_PROGRESS
+				}
+				reply.Task = task
+				reply.TaskReplyState = GOT
+			}
+		}
 	}
+
+//	go m.schedule()
 	return nil
 }
 
 
 func (m *Master) WorkerRegister(args *RegisterArgs, reply *RegisterReply) error{
+	fmt.Printf("*********in master WorkerRegister, current worker: %v\n", m.seq)
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
-	reply.workerId = m.seq
+	reply.WorkerId = m.seq
 	m.seq ++
 	return nil
 }
 
 
-func (master *Master) ReportMapTask(args *reportArgs, reply *reportReply) error{
+func (m *Master) ReportTask(args *ReportArgs, reply *ReportReply) error{
+	m.mutex.Lock()
+	defer m.mutex.Unlock()
 	task := args.Task
-	phase := task.phase
-	if phase == "map" {
-		master.allTask[task.imap].status = COMPLETED
-	} else {
-		master.allTask[task.iReduce].status = COMPLETED
+	phase := task.Phase
+//	fmt.Println("in ReportTask : ", task)
+	if find := strings.Contains(phase, "map"); find {
+		m.allTask[task.Imap].Status = COMPLETED
 	}
-	go master.schedule()
+	if find := strings.Contains(phase, "reduce"); find {
+		m.allTask[task.IReduce].Status = COMPLETED
+	}
+//	fmt.Println("in ReportTask, imap, ireduce : ", args.Imap,  args.IReduce)
+//	if args.Imap != -1 {
+//		master.allTask[task.Imap].Status = COMPLETED
+//	}
+//	if args.IReduce != -1 {
+//		master.allTask[task.IReduce].Status = COMPLETED
+//	}
+	go m.schedule()
 	return nil
 }
 
@@ -162,25 +156,25 @@ func (master *Master) ReportMapTask(args *reportArgs, reply *reportReply) error{
 
 func (master *Master) getTask(i int) *Task{
 	task := Task{}
-	if master.phase == "map" {
+	if find := strings.Contains(master.phase, "map"); find {
 		task = Task{
-			done : false,
-			phase : "map",
-			fileName: master.files[i],
-			imap : i,
-			iReduce: -1,
-			nMap: master.nTask,
-			nReduce: master.nReduce,
+			Done : false,
+			Phase : "map",
+			FileName: master.files[i],
+			Imap : i,
+			IReduce: -1,
+			NMap: master.nTask,
+			NReduce: master.nReduce,
 		}
 	} else {
 		task = Task{
-			done : false,
-			phase : "reduce",
-			fileName: "",
-			imap : -1,
-			iReduce: i,
-			nMap: master.nTask,
-			nReduce: master.nReduce,
+			Done : false,
+			Phase : "reduce",
+			FileName: "",
+			Imap : -1,
+			IReduce: i,
+			NMap: master.nTask,
+			NReduce: master.nReduce,
 		}
 	}
 	return &task
@@ -189,68 +183,132 @@ func (master *Master) getTask(i int) *Task{
 
 func (master *Master) schedule() {
 	master.mutex.Lock()
-	defer master.mutex.Unlock()
-	finishMap := true
-	finishReduce := true
+//	defer master.mutex.Unlock()
+//	finishMap := true
+//	finishReduce := true
 	barrier := true
+	hasUnlocked := false
 	if master.phase == "map" {
+	//	finishReduce = false
 		for i, t := range master.allTask {
-			switch t.status {
+			switch t.Status {
 			case IDLE:
-				finishMap = false
+			//	finishMap = false
 				barrier = false
 				master.freeTaskQueue = append(master.freeTaskQueue, *master.getTask(i))
-				master.allTask[i].status = IN_QUEUE
+				master.allTask[i].Status = IN_QUEUE
 			case IN_QUEUE:
-				finishMap = false
-			case IN_PROGRESS:
-				finishMap = false
-				if time.Now().Sub(t.startTime).Seconds() > 10 {
-					master.freeTaskQueue = append(master.freeTaskQueue, *master.getTask(i))
-					master.allTask[i].status = IN_QUEUE
-				}
-			}
-		}
-	} else {
-		for i, t := range master.allTask {
-			switch t.status {
-			case IDLE:
-				finishReduce = false
+		//		finishMap = false
 				barrier = false
-				master.freeTaskQueue = append(master.freeTaskQueue, *master.getTask(i))
-				master.allTask[i].status = IN_QUEUE
-			case IN_QUEUE:
-				finishReduce = false
+			}
+		}
+		if barrier {
+			master.phase = "map_barrier"
+		}
+	//	fmt.Println(master.freeTaskQueue)
+	} else if master.phase == "map_barrier" {
+		allComplete := true
+	//	finishReduce = false
+		fmt.Println("in map_barrier, freetaskqueue len : ", len(master.freeTaskQueue))
+		for i, t := range master.allTask {
+			fmt.Printf("%v\t", t.Status)
+			switch t.Status {
 			case IN_PROGRESS:
-				finishReduce = false
-				if time.Now().Sub(t.startTime).Seconds() > 10 {
+		//		finishMap = false
+				if time.Now().Sub(t.StartTime).Seconds() > 10 {
 					master.freeTaskQueue = append(master.freeTaskQueue, *master.getTask(i))
-					master.allTask[i].status = IN_QUEUE
+					master.allTask[i].Status = IN_QUEUE
+					master.phase = "map"
 				}
 			}
-		}
-	}
-	if finishMap && master.phase == "map" {
-		// init reduce phase
-		master.phase = "reduce"
-		for i := 0; i < master.nReduce; i ++ {
-			master.allTask[i] = TaskState{
-				status:    IDLE,
-				workerId:  -1,
-				startTime: time.Now(),
+			if t.Status != COMPLETED {
+				allComplete = false
 			}
 		}
+		fmt.Println("")
+
+		if allComplete {
+			master.phase = "reduce"
+			master.freeTaskQueue = make([]Task, 0, master.nReduce)
+			master.allTask = make([]TaskState, master.nReduce, master.nReduce)
+			fmt.Println("initing reduce task")
+			for i := 0; i < master.nReduce; i ++ {
+				fmt.Println(i)
+				master.allTask[i] = TaskState{
+					Status:    IDLE,
+					WorkerId:  -1,
+					StartTime: time.Now(),
+				}
+			}
+			fmt.Println("initing complete")
+			hasUnlocked = true
+			master.mutex.Unlock()
+			master.schedule()
+		}
+	} else if master.phase == "reduce" {
+		fmt.Println("**********in master schedule, reduce phase********")
+		for i, t := range master.allTask {
+			switch t.Status {
+			case IDLE:
+		//		finishReduce = false
+				barrier = false
+			//	fmt.Printf("getting task %v in queue\n", i)
+				master.freeTaskQueue = append(master.freeTaskQueue, *master.getTask(i))
+				master.allTask[i].Status = IN_QUEUE
+			case IN_QUEUE:
+		//		finishReduce = false
+				barrier = false
+			case IN_PROGRESS:
+		//		finishReduce = false
+				if time.Now().Sub(t.StartTime).Seconds() > 10 {
+					master.freeTaskQueue = append(master.freeTaskQueue, *master.getTask(i))
+					master.allTask[i].Status = IN_QUEUE
+				}
+			//case COMPLETED:
+			//	cnt ++
+			}
+		}
+		if barrier {
+			master.phase = "reduce_barrier"
+		}
+	} else if master.phase == "reduce_barrier" {
+		allComplete := true
+		for i, t := range master.allTask {
+			switch t.Status {
+			case IN_PROGRESS:
+			//	finishMap = false
+				if time.Now().Sub(t.StartTime).Seconds() > 10 {
+					master.freeTaskQueue = append(master.freeTaskQueue, *master.getTask(i))
+					master.allTask[i].Status = IN_QUEUE
+					master.phase = "reduce"
+				}
+			}
+			if t.Status != COMPLETED {
+				allComplete = false
+			}
+		}
+		if allComplete {
+			master.phase = "fin"
+		}
 	}
-	if finishReduce {
-		master.phase = "fin"
-	} else if barrier {
-		master.phase = "barrier"
+
+	if !hasUnlocked {
+		master.mutex.Unlock()
 	}
+	//fmt.Println("current freeTaskQueue")
+	//fmt.Println("finishMap : ", finishMap)
+	//fmt.Println("finishReduce : ", finishReduce)
+//	fmt.Println("barrier : ", barrier)
+//	for _, t := range master.freeTaskQueue {
+//	//	fmt.Printf("%v\t", t)
+//		fmt.Println(t)
+//	}
+	fmt.Println("")
 }
 
 
 func (m *Master) TickSchedule() {
-	if !m.Done() {
+	for !m.Done() {
 		go m.schedule()
 		time.Sleep(time.Second)
 	}
