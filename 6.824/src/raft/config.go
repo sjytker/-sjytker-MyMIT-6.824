@@ -354,6 +354,7 @@ func (cfg *config) checkNoLeader() {
 			_, is_leader := cfg.rafts[i].GetState()
 			if is_leader {
 				cfg.t.Fatalf("expected no leader, but %v claims to be leader", i)
+			//	fmt.Printf("expected no leader, but %v claims to be leader", i)
 			}
 		}
 	}

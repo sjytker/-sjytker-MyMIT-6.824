@@ -27,6 +27,8 @@ package labrpc
 // the "Raft" is the name of the server struct to be called.
 // the "AppendEntries" is the name of the method to be called.
 // Call() returns true to indicate that the server executed the request
+
+
 // and the reply is valid.
 // Call() returns false if the network lost the request or reply
 // or the server is down.
