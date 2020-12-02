@@ -161,6 +161,7 @@ func TestFailAgree2B(t *testing.T) {
 
 	// disconnect one follower from the network.
 	leader := cfg.checkOneLeader()
+	DPrintf("**************disconnecting a follower : %v ********** \n", (leader + 1) % servers)
 	cfg.disconnect((leader + 1) % servers)
 
 	// the leader and remaining follower should be
@@ -172,6 +173,7 @@ func TestFailAgree2B(t *testing.T) {
 	cfg.one(105, servers-1, false)
 
 	// re-connect
+	DPrintf("**************reconnecting a follower : %v ********** \n", (leader + 1) % servers)
 	cfg.connect((leader + 1) % servers)
 
 	// the full set of servers should preserve
@@ -195,6 +197,9 @@ func TestFailNoAgree2B(t *testing.T) {
 
 	// 3 of 5 followers disconnect
 	leader := cfg.checkOneLeader()
+	DPrintf("**************TestFailNoAgree2B disconnecting follower : %v ********** \n", (leader + 1) % servers)
+	DPrintf("**************TestFailNoAgree2B disconnecting follower : %v ********** \n", (leader + 2) % servers)
+	DPrintf("**************TestFailNoAgree2B disconnecting follower : %v ********** \n", (leader + 3) % servers)
 	cfg.disconnect((leader + 1) % servers)
 	cfg.disconnect((leader + 2) % servers)
 	cfg.disconnect((leader + 3) % servers)
@@ -215,6 +220,9 @@ func TestFailNoAgree2B(t *testing.T) {
 	}
 
 	// repair
+	DPrintf("**************TestFailNoAgree2B Reconnecting follower : %v ********** \n", (leader + 1) % servers)
+	DPrintf("**************TestFailNoAgree2B Reconnecting follower : %v ********** \n", (leader + 2) % servers)
+	DPrintf("**************TestFailNoAgree2B Reconnecting follower : %v ********** \n", (leader + 3) % servers)
 	cfg.connect((leader + 1) % servers)
 	cfg.connect((leader + 2) % servers)
 	cfg.connect((leader + 3) % servers)
@@ -347,6 +355,7 @@ func TestRejoin2B(t *testing.T) {
 
 	// leader network failure
 	leader1 := cfg.checkOneLeader()
+	DPrintf("**************TestRejoin2B disconnecting leader : %v ********** \n", leader1)
 	cfg.disconnect(leader1)
 
 	// make old leader try to agree on some entries
@@ -357,16 +366,20 @@ func TestRejoin2B(t *testing.T) {
 	// new leader commits, also for index=2
 	cfg.one(103, 2, true)
 
+	DPrintf("cfg.one(103) complete in rejoin2B\n")
 	// new leader network failure
 	leader2 := cfg.checkOneLeader()
+	DPrintf("**************TestRejoin2B disconnecting leader : %v ********** \n", leader2)
 	cfg.disconnect(leader2)
 
 	// old leader connected again
+	DPrintf("**************TestRejoin2B connecting leader : %v ********** \n", leader1)
 	cfg.connect(leader1)
 
 	cfg.one(104, 2, true)
 
 	// all together now
+	DPrintf("**************TestRejoin2B connecting leader : %v ********** \n", leader2)
 	cfg.connect(leader2)
 
 	cfg.one(105, servers, true)
@@ -385,9 +398,12 @@ func TestBackup2B(t *testing.T) {
 
 	// put leader and one follower in a partition
 	leader1 := cfg.checkOneLeader()
+
+	DPrintf("**************TestBackup2B, step1, 5 in total, 2 alive, 3 dead ********** \n")
+	DPrintf("**************TestBackup2B, putting 50 cmds that won't commit ********** \n")
+	cfg.disconnect((leader1 + 4) % servers)
 	cfg.disconnect((leader1 + 2) % servers)
 	cfg.disconnect((leader1 + 3) % servers)
-	cfg.disconnect((leader1 + 4) % servers)
 
 	// submit lots of commands that won't commit
 	for i := 0; i < 50; i++ {
@@ -396,10 +412,17 @@ func TestBackup2B(t *testing.T) {
 
 	time.Sleep(RaftElectionTimeout / 2)
 
+	DPrintf("**************TestBackup2B, step2, 5 in total, 3 alive, 2 dead ********** \n")
+	DPrintf("**************TestBackup2B, putting 50 cmds that will commit ********** \n")
+	//DPrintf("**************TestBackup2B disconnecting leader : %v ********** \n", (leader1 + 0) % servers)
+	//DPrintf("**************TestBackup2B disconnecting follower : %v ********** \n", (leader1 + 1) % servers)
 	cfg.disconnect((leader1 + 0) % servers)
 	cfg.disconnect((leader1 + 1) % servers)
 
 	// allow other partition to recover
+	//DPrintf("**************TestBackup2B reconnecting follower : %v ********** \n", (leader1 + 2) % servers)
+	//DPrintf("**************TestBackup2B reconnecting follower : %v ********** \n", (leader1 + 3) % servers)
+	//DPrintf("**************TestBackup2B reconnecting follower : %v ********** \n", (leader1 + 4) % servers)
 	cfg.connect((leader1 + 2) % servers)
 	cfg.connect((leader1 + 3) % servers)
 	cfg.connect((leader1 + 4) % servers)
@@ -417,6 +440,8 @@ func TestBackup2B(t *testing.T) {
 	}
 	cfg.disconnect(other)
 
+	DPrintf("**************TestBackup2B, step3, 5 in total, 2 alive, 3 dead again ********** \n")
+	DPrintf("**************TestBackup2B, putting 50 cmds that won't commit ********** \n")
 	// lots more commands that won't commit
 	for i := 0; i < 50; i++ {
 		cfg.rafts[leader2].Start(rand.Int())
@@ -424,6 +449,8 @@ func TestBackup2B(t *testing.T) {
 
 	time.Sleep(RaftElectionTimeout / 2)
 
+	DPrintf("**************TestBackup2B, step4, 5 in total, 5 alive ********** \n")
+	DPrintf("**************TestBackup2B, putting 50 cmds that will commit ********** \n")
 	// bring original leader back to life,
 	for i := 0; i < servers; i++ {
 		cfg.disconnect(i)
@@ -437,6 +464,7 @@ func TestBackup2B(t *testing.T) {
 		cfg.one(rand.Int(), 3, true)
 	}
 
+	DPrintf("**************TestBackup2B, step5, 5 in total, 5 alive, check again ********** \n")
 	// now everyone
 	for i := 0; i < servers; i++ {
 		cfg.connect(i)

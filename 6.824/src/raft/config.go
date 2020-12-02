@@ -44,7 +44,7 @@ type config struct {
 	connected []bool   // whether each server is on the net
 	saved     []*Persister
 	endnames  [][]string            // the port file names each sends to
-	logs      []map[int]interface{} // copy of each server's committed entries
+	logs      []map[int]interface{} // copy of each server's committed entries。 这是通过 applied channel 获得的 log
 	start     time.Time             // time at which make_config() was called
 	// begin()/end() statistics
 	t0        time.Time // time at which test_test.go called cfg.begin()
@@ -177,6 +177,8 @@ func (cfg *config) start1(i int) {
 				for j := 0; j < len(cfg.logs); j++ {
 					if old, oldok := cfg.logs[j][m.CommandIndex]; oldok && old != v {
 						// some server has already committed a different value for this entry!
+						DPrintf("apply error, j = %v, oldok = %v, old = %v\n", j, oldok, old)
+						cfg.PrintAllLog()
 						err_msg = fmt.Sprintf("commit index=%v server=%v %v != server=%v %v",
 							m.CommandIndex, i, m.Command, j, old)
 					}
@@ -212,6 +214,13 @@ func (cfg *config) start1(i int) {
 	srv := labrpc.MakeServer()
 	srv.AddService(svc)
 	cfg.net.AddServer(i, srv)
+}
+
+func (cfg *config) PrintAllLog() {
+	DPrintf("all sever logs : \n")
+	for i := 0; i < cfg.n; i ++ {
+		DPrintf("server %v log : %v \n", i, cfg.logs[i])
+	}
 }
 
 func (cfg *config) checkTimeout() {
@@ -457,6 +466,7 @@ func (cfg *config) one(cmd interface{}, expectedServers int, retry bool) int {
 			t1 := time.Now()
 			for time.Since(t1).Seconds() < 2 {
 				nd, cmd1 := cfg.nCommitted(index)
+			//	DPrintf("in one, nd = %v, cmd1 = %v \n", nd, cmd1)
 				if nd > 0 && nd >= expectedServers {
 					// committed
 					if cmd1 == cmd {
@@ -473,6 +483,7 @@ func (cfg *config) one(cmd interface{}, expectedServers int, retry bool) int {
 			time.Sleep(50 * time.Millisecond)
 		}
 	}
+	DPrintf("!! no leader in one func!!\n")
 	cfg.t.Fatalf("one(%v) failed to reach agreement", cmd)
 	return -1
 }

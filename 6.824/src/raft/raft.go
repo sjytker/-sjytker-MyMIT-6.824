@@ -77,8 +77,10 @@ type Raft struct {
 
 	electionTimer *time.Timer
 	appendEntriesTimer []*time.Timer
+	applyTimer *time.Timer
 	stopCh chan struct{}
 	applyCh chan ApplyMsg
+	lockSeq []string
 }
 
 // return currentTerm and whether this server
@@ -159,26 +161,42 @@ type RequestVoteReply struct {
 //
 func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 	// Your code here (2A, 2B).
-	rf.mu.Lock()
-
-	_, lastIndex := rf.lastLogTermIndex()
+	rf.Lock("lock in RE")
+	defer rf.Unlock("lock in RE")
+	lastTerm, lastIndex := rf.lastLogTermIndex()
 	DPrintf("candidate %v's term = %v, my(%v) term = %v\n", args.CandidateId, args.Term, rf.me, rf.currentTerm)
-	rf.resetElectionTimer()
+	DPrintf("args.LastLogterm = %v, args.LastLogIndex = %v, lastTerm = %v, lastIndex = %v\n", args.LastLogterm, args.LastLogIndex, lastTerm, lastIndex)
+	reply.VoteGranted = false
 	if args.Term < rf.currentTerm {
-		reply.VoteGranted = false
-	//	DPrintf("candidate %v's term is smaller than %v, reject \n", args.CandidateId, rf.me)
-	} else if args.Term > rf.currentTerm || rf.voteFor == -1 {
-	//	DPrintf("candidate %v's term is larger than %v, last votefor == %v, accept\n", args.CandidateId, rf.me, rf.voteFor)
+		//	DPrintf("candidate %v's term is smaller than %v, reject \n", args.CandidateId, rf.me)
+		return
+	}
+
+	if rf.state == LEADER {
+		return
+	}
+	if rf.voteFor == -1 || rf.voteFor == args.CandidateId {
+		DPrintf("my(%v) votefor == -1, accept %v\n",rf.me, args.CandidateId)
 		rf.currentTerm = args.Term
 		rf.state = FOLLOWER
 		reply.VoteGranted = true
 		rf.voteFor = args.CandidateId
-	} else if args.CandidateId == rf.voteFor && lastIndex <= args.LastLogIndex {
+		rf.resetElectionTimer()
+	} else if lastTerm < args.LastLogterm || (lastTerm == args.LastLogterm && lastIndex <= args.LastLogIndex) {
 		DPrintf("has voted for candidate %v, and his log is newer, accept\n", args.CandidateId)
 		reply.VoteGranted = true
+		rf.state = FOLLOWER
+		rf.voteFor = args.CandidateId
+		rf.currentTerm = args.Term
+		rf.resetElectionTimer()
 	}
 
-	rf.mu.Unlock()
+ 	if args.Term > rf.currentTerm {
+		rf.currentTerm = args.Term
+		rf.state = FOLLOWER
+		rf.voteFor = -1
+	}
+
 }
 
 //
@@ -221,7 +239,7 @@ func (rf *Raft) sendAppendEntries(server int, args *AppendEntriesArgs, reply *Ap
 }
 
 func (rf *Raft) SendRequest() int{
-	rf.mu.Lock() // lock1
+	rf.Lock("lock in SendRequest") // lock1
 	res := 0
 	n := len(rf.peers)
 	//
@@ -237,7 +255,7 @@ func (rf *Raft) SendRequest() int{
 		LastLogIndex: lastIndex,
 		LastLogterm:  lastTerm,
 	}
-	rf.mu.Unlock()  // lock1
+	rf.Unlock("lock in SendRequest")  // lock1
 
 	RPCTimer := time.NewTimer(RPCTimeout)
 	defer RPCTimer.Stop()
@@ -252,9 +270,9 @@ func (rf *Raft) SendRequest() int{
 				reply := RequestVoteReply{}
 				if ok := rf.sendRequestVote(i, &args, &reply); ok {
 					if reply.VoteGranted == true {
-						rf.mu.Lock()  // lock2
+				//		rf.mu.Lock()  // lock2
 						res += 1
-						rf.mu.Unlock()  // lock2
+				//		rf.mu.Unlock()  // lock2
 					}
 				}
 				wg.Done()
@@ -315,19 +333,18 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 
 func (rf *Raft) SendHeartBeat() {
 
-	// n := len(rf.peers)
-//	sig := make(chan int, n)   // use channel as semaphore
+	rf.mu.Lock()
+	args := AppendEntriesArgs{
+		Term:         rf.currentTerm,
+		LeaderId:       rf.me,
+		PrevLogIndex: 0,
+		PrevLogTerm:  0,
+		Entries:      nil,
+		LeaderCommit: 0,
+	}
+	rf.mu.Unlock()
+	reply := AppendEntriesReply{}
 	for i, _ := range rf.peers {
-	//	last := len(rf.log)
-		args := AppendEntriesArgs{
-			Term:         rf.currentTerm,
-			LeaderId:       rf.me,
-			PrevLogIndex: 0,
-			PrevLogTerm:  0,
-			Entries:      nil,
-			LeaderCommit: 0,
-		}
-		reply := AppendEntriesReply{}
 		if i != rf.me {
 			go func(i int) {
 				rf.sendAppendEntries(i, &args, &reply)
@@ -364,39 +381,49 @@ func (rf *Raft) killed() bool {
 
 
 func (rf * Raft) Election() {
-	rf.mu.Lock()  // lock1
+	rf.Lock("lock1 in election")  // lock1
+	defer rf.resetElectionTimer()
 	if rf.state == LEADER {
-		rf.mu.Unlock()  // lock1
+//		rf.mu.Unlock()  // lock1
 		return
 	}
 	DPrintf("election timeout, starting election for server %v\n", rf.me)
 	rf.currentTerm ++
-	rf.voteFor = rf.me
+
 	rf.state = CANDIDATE
-	rf.mu.Unlock()   // lock1
+	rf.Unlock("lock1 in election")   // lock1
 	count := rf.SendRequest()
 	fmt.Printf("candidate %v request count : %v, len(rf.peers) / 2: %v \n", rf.me, count, len(rf.peers) / 2)
-	rf.mu.Lock() // lock2
+
+	rf.Lock("lock2 in election") // lock2
 	if rf.state == CANDIDATE && count >= len(rf.peers) / 2 {
 		// leader comes to power
 		// initialize all nextIndex values to the index just after the last one in leader's k
 		DPrintf("candidate %v comes to power, current term = %v\n", rf.me, rf.currentTerm)
+		rf.voteFor = rf.me
 		rf.state = LEADER
 		n := len(rf.peers)
 		_, lastIndex := rf.lastLogTermIndex()
 		match := make([]int, n, n)
 		next := make([]int, n, n)
 		for i := 0; i < n; i ++ {
-			match[i] = 0
+			next[i] = lastIndex +1
 		}
 		for i := 0; i < n; i ++ {
-			next[i] = lastIndex +1
+			if i == rf.me {
+				match[i] = next[i] - 1;
+			} else {
+				match[i] = 0
+			}
 		}
 		match[rf.me] = lastIndex
 		rf.nextIndex = next
 		rf.matchIndex = match
+	} else {
+		rf.currentTerm --
+		rf.state = FOLLOWER
 	}
-	rf.mu.Unlock()   // lock2
+	rf.Unlock("lock2 in election")   // lock2
 }
 
 
@@ -414,7 +441,6 @@ func (rf *Raft) Periodic() {
 				//	DPrintf("AE timeout, server % v is appending AE for %v\n", rf.me, index)
 					rf.appendEntriesToPeer(index)
 					rf.resetAETimer(index)
-				//	rf.resetElectionTimer()
 				//	DPrintf("server % v finishe append AE for %v\n", rf.me, index)
 				case <- rf.stopCh:
 					return
@@ -430,15 +456,30 @@ func (rf *Raft) Periodic() {
 			select {
 			case <- rf.electionTimer.C:
 				rf.Election()
-				rf.resetElectionTimer()
 			case <-rf.stopCh:
 				return
+			}
+		}
+	}()
+
+	// apply log
+	go func() {
+		for {
+			select {
+			case <-rf.stopCh:
+				return
+			case <-rf.applyTimer.C:
+				rf.Apply()
 			}
 		}
 	}()
 }
 
 func (rf *Raft) Apply() {
+
+	rf.Lock("Lock in apply")
+	defer rf.Unlock("Lock in apply")
+	defer rf.applyTimer.Reset(ApplyInterval)
 
 	for i := rf.lastApplied + 1; i <= rf.commitIndex; i ++ {
 		msg := ApplyMsg{
@@ -448,8 +489,13 @@ func (rf *Raft) Apply() {
 		}
 		rf.applyCh <- msg
 	}
-	rf.lastApplied = rf.commitIndex
+	if rf.commitIndex > rf.lastApplied {
+		DPrintf("server %v lastApplied = %v, has applied to %v \n", rf.me, rf.lastApplied, rf.commitIndex)
+		rf.lastApplied = rf.commitIndex
+	}
+
 }
+
 
 //
 // the service or tester wants to create a Raft server. the ports
@@ -483,8 +529,10 @@ func Make(peers []*labrpc.ClientEnd, me int,
 		matchIndex:  nil,
 		electionTimer: nil,
 		appendEntriesTimer: make([]*time.Timer, n),
+		applyTimer: time.NewTimer(ApplyInterval),
 		stopCh: make(chan struct{}),
 		applyCh: applyCh,
+		lockSeq: make([]string, 0),
 	}
 	// Your initialization code here (2A, 2B, 2C).
 

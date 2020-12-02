@@ -23,18 +23,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="428b95ac-c9d1-4caa-b44b-264550ee0976" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/raft/append_entries.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/raft/common.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/raft/state.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/labrpc/labrpc.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/labrpc/labrpc.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/raft/append_entries.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/raft/append_entries.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/raft/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/raft/common.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/raft/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/raft/config.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/raft/raft.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/raft/raft.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/raft/test_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/raft/test_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/raft/util.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/raft/util.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/遇到的问题.md" beforeDir="false" afterPath="$PROJECT_DIR$/遇到的问题.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../lab1/遇到的 bugs.md" beforeDir="false" afterPath="$PROJECT_DIR$/../lab1/遇到的 bugs.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../lab2/gfs.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/../lab2/gfs.pdf" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,6 +57,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="DefaultGoTemplateProperty" value="Go File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -215,12 +212,12 @@
     <state x="3320" y="169" width="1150" height="956" maximized="true" key="dock-window-1/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1605767898917" />
     <state x="0" y="0" width="1512" height="1055" key="dock-window-1/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1605879278776" />
     <state x="353" y="161" width="2013" height="1134" key="dock-window-1/0.0.2560.1409@0.0.2560.1409" timestamp="1605888602503" />
-    <state x="574" y="209" width="564" height="554" key="find.popup" timestamp="1606807215145">
-      <screen x="0" y="0" width="1500" height="970" />
+    <state x="3520" y="375" width="603" height="804" key="find.popup" timestamp="1606885182678">
+      <screen x="3000" y="0" width="2560" height="1409" />
     </state>
-    <state x="574" y="209" width="564" height="554" key="find.popup/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1606807215145" />
+    <state x="574" y="209" width="564" height="554" key="find.popup/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1606813305016" />
     <state x="3390" y="246" width="566" height="804" key="find.popup/0.0.1500.970/3000.0.1920.1050@3000.0.1920.1050" timestamp="1606456495829" />
-    <state x="3520" y="375" width="603" height="804" key="find.popup/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1606747415237" />
+    <state x="3520" y="375" width="603" height="804" key="find.popup/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1606885182678" />
     <state x="979" y="303" width="603" height="804" key="find.popup/0.0.2560.1409@0.0.2560.1409" timestamp="1606009190401" />
     <state x="3551" y="546" key="ftp.server.browser" timestamp="1605879900603">
       <screen x="3000" y="0" width="2560" height="1409" />
@@ -230,10 +227,10 @@
       <screen x="3000" y="0" width="2560" height="1409" />
     </state>
     <state x="3580" y="707" key="publish.login/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1605879668768" />
-    <state x="416" y="211" width="672" height="678" key="search.everywhere.popup" timestamp="1606548854430">
+    <state x="417" y="212" width="672" height="678" key="search.everywhere.popup" timestamp="1606905015836">
       <screen x="0" y="0" width="1500" height="970" />
     </state>
-    <state x="416" y="211" width="672" height="678" key="search.everywhere.popup/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1606548854430" />
+    <state x="417" y="212" width="672" height="678" key="search.everywhere.popup/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1606905015836" />
     <state x="3530" y="227" width="861" height="735" key="search.everywhere.popup/0.0.1500.970/3000.0.1920.1050@3000.0.1920.1050" timestamp="1606460551859" />
     <state x="3707" y="304" width="1147" height="985" key="search.everywhere.popup/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1606444307742" />
     <state x="709" y="305" width="1147" height="985" key="search.everywhere.popup/0.0.2560.1409@0.0.2560.1409" timestamp="1606015021943" />

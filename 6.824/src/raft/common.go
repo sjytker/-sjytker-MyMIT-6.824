@@ -11,6 +11,7 @@ const (
 	electionTimeOut = 300 * time.Millisecond
 	beatPeriod = 150 * time.Millisecond
 	RPCTimeout = 100 * time.Millisecond
+	ApplyInterval = 100 * time.Millisecond
 )
 
 
@@ -47,7 +48,7 @@ func (rf *Raft) PrevLogTermIndex(index int)(int, int) {
 	for i := 0; i < len(rf.peers); i ++ {
 		fmt.Println(rf.matchIndex[i], rf.nextIndex[i])
 	}
-	fmt.Println("getting server : ", index)
+	DPrintf("leader %v getting server %v prev ", rf.me, index)
 	prevIdx := rf.nextIndex[index] - 1
 	prevTerm := rf.log[prevIdx].Term
 	return prevTerm, prevIdx
@@ -65,4 +66,31 @@ func (rf *Raft) resetElectionTimer() {
 	t := GetRandElectionTime()
 	rf.electionTimer.Reset(t)
 	DPrintf("server %v election time was reset to : %v\n", rf.me, t)
+}
+
+
+func (rf *Raft) Lock(m string) {
+	// dt := time.NewTimer(500 * time.Millisecond)
+	rf.mu.Lock()
+	//rf.lockSeq = append(rf.lockSeq, m)
+	//if len(rf.lockSeq) > 1 {
+	//	log.Fatal("deadLock!  current lockSeq : ", rf.lockSeq, len(rf.lockSeq))
+	//}
+
+//	DPrintf("server %v requesting %v \n", rf.me, m)
+//	DPrintf("server %v Lock seq : %v \n", rf.me, rf.lockSeq)
+}
+
+
+func (rf *Raft) Unlock(m string) {
+
+	rf.mu.Unlock()
+//	rf.lockSeq = rf.lockSeq[:len(rf.lockSeq) - 1]
+	//DPrintf("server %v releasing %v \n", rf.me, m)
+}
+
+
+func (rf *Raft) PrintLog() {
+	DPrintf("leader %v log len: %v, log : %v, lastApplied : %v, commitIndex : %v\n", rf.me, len(rf.log), rf.log, rf.lastApplied, rf.commitIndex)
+	//DPrintf("other peers' log: \n")
 }
