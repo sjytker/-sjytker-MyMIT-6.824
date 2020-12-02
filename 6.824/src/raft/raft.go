@@ -176,14 +176,14 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 		return
 	}
 	if rf.voteFor == -1 || rf.voteFor == args.CandidateId {
-		DPrintf("my(%v) votefor == -1, accept %v\n",rf.me, args.CandidateId)
+		DPrintf("my(%v) votefor == -1 or has voted for %v, accept\n",rf.me, args.CandidateId)
 		rf.currentTerm = args.Term
 		rf.state = FOLLOWER
 		reply.VoteGranted = true
 		rf.voteFor = args.CandidateId
 		rf.resetElectionTimer()
 	} else if lastTerm < args.LastLogterm || (lastTerm == args.LastLogterm && lastIndex <= args.LastLogIndex) {
-		DPrintf("has voted for candidate %v, and his log is newer, accept\n", args.CandidateId)
+		DPrintf("candidate %v log is newer, accept\n", args.CandidateId)
 		reply.VoteGranted = true
 		rf.state = FOLLOWER
 		rf.voteFor = args.CandidateId

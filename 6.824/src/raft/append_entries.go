@@ -149,6 +149,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 	if entry.Term != args.PrevLogTerm {
 		reply.Success = false
 		DPrintf("AE match fail, leader %v term = %v , follower %v term = %v \n", args.LeaderId, args.Term, rf.me, rf.currentTerm)
+		DPrintf("entry.term = %v, prevLogTerm = %v\n", entry.Term, args.PrevLogTerm)
 	} else {
 		DPrintf("AE match success, leader: %v, follower:%v \n", args.LeaderId, rf.me)
 		reply.Success = true

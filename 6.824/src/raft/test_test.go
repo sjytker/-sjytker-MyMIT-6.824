@@ -414,15 +414,10 @@ func TestBackup2B(t *testing.T) {
 
 	DPrintf("**************TestBackup2B, step2, 5 in total, 3 alive, 2 dead ********** \n")
 	DPrintf("**************TestBackup2B, putting 50 cmds that will commit ********** \n")
-	//DPrintf("**************TestBackup2B disconnecting leader : %v ********** \n", (leader1 + 0) % servers)
-	//DPrintf("**************TestBackup2B disconnecting follower : %v ********** \n", (leader1 + 1) % servers)
 	cfg.disconnect((leader1 + 0) % servers)
 	cfg.disconnect((leader1 + 1) % servers)
 
 	// allow other partition to recover
-	//DPrintf("**************TestBackup2B reconnecting follower : %v ********** \n", (leader1 + 2) % servers)
-	//DPrintf("**************TestBackup2B reconnecting follower : %v ********** \n", (leader1 + 3) % servers)
-	//DPrintf("**************TestBackup2B reconnecting follower : %v ********** \n", (leader1 + 4) % servers)
 	cfg.connect((leader1 + 2) % servers)
 	cfg.connect((leader1 + 3) % servers)
 	cfg.connect((leader1 + 4) % servers)
@@ -440,7 +435,7 @@ func TestBackup2B(t *testing.T) {
 	}
 	cfg.disconnect(other)
 
-	DPrintf("**************TestBackup2B, step3, 5 in total, 2 alive, 3 dead again ********** \n")
+	DPrintf("**************TestBackup2B, step3, 5 in total, 2 alive, 3 dead, by shutting down one living ********** \n")
 	DPrintf("**************TestBackup2B, putting 50 cmds that won't commit ********** \n")
 	// lots more commands that won't commit
 	for i := 0; i < 50; i++ {
@@ -449,7 +444,7 @@ func TestBackup2B(t *testing.T) {
 
 	time.Sleep(RaftElectionTimeout / 2)
 
-	DPrintf("**************TestBackup2B, step4, 5 in total, 5 alive ********** \n")
+	DPrintf("**************TestBackup2B, step4, 3 alive, leader1 start, leader2 down ********** \n")
 	DPrintf("**************TestBackup2B, putting 50 cmds that will commit ********** \n")
 	// bring original leader back to life,
 	for i := 0; i < servers; i++ {

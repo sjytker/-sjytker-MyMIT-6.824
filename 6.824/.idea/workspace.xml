@@ -23,6 +23,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="428b95ac-c9d1-4caa-b44b-264550ee0976" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/raft/Aout" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/raft/Bout" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/raft/Bout2" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/raft/append_entries.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/raft/append_entries.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/raft/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/raft/common.go" afterDir="false" />
