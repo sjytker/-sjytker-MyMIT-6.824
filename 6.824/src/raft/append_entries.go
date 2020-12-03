@@ -15,6 +15,9 @@ type AppendEntriesArgs struct {
 type AppendEntriesReply struct {
 	Success bool
 	Term int
+	XTerm int
+	XIndex int
+	XLen int
 	NextIndex int
 }
 
@@ -44,7 +47,14 @@ func (rf *Raft) appendEntriesToPeer(index int) {
 			Entries:      rf.log[rf.nextIndex[index] : len(rf.log)],
 			LeaderCommit: rf.commitIndex,
 		}
-		reply := AppendEntriesReply{}
+		reply := AppendEntriesReply{
+			Success:   false,
+			Term:      0,
+			XTerm:     0,
+			XIndex:    0,
+			XLen:      0,
+			NextIndex: 0,
+		}
 		resCh := make(chan bool)
 		RPCTimer := time.NewTimer(RPCTimeout)
 		defer RPCTimer.Stop()
@@ -97,8 +107,33 @@ func (rf *Raft) appendEntriesToPeer(index int) {
 		// due with it according to paper's figure 2
 		// optimize the roll back algorithm, instead of -1 per time
 		if reply.Success == false {
-			rf.nextIndex[index] --
-			rf.matchIndex[index] = rf.nextIndex[index] - 1
+
+			XTerm, XIndex, XLen := reply.Term, reply.XIndex, reply.XLen
+			DPrintf("In AEtoPeer: XIndex = %v, XTerm = %v, XLen = %v \n", reply.XIndex, reply.XTerm, reply.XLen)
+			//NextIndex := XLen
+			var NextIndex int
+			if XLen <= args.PrevLogIndex {
+				NextIndex = XLen
+			}
+			if !rf.containsXTerm(XTerm, rf.nextIndex[index]) {
+			//	NextIndex = min(NextIndex, XIndex)
+				NextIndex = XIndex
+			} else {
+				leftMost := rf.nextIndex[index] - 1
+				start := false
+				for leftMost > 0 && (!start || rf.log[leftMost - 1].Term == XTerm) {
+					if rf.log[leftMost].Term == XTerm {
+						start = true
+					}
+					leftMost --
+				}
+				NextIndex = leftMost + 1
+			}
+			rf.nextIndex[index] = NextIndex
+			rf.matchIndex[index] = NextIndex - 1
+			DPrintf("leader %v -> server %v, nextIndex = %v\n", rf.me, index, NextIndex)
+			//rf.nextIndex[index] --
+			//rf.matchIndex[index] = rf.nextIndex[index] - 1
 		}
 
 		rf.Unlock("lock2 in AEtoPeer") // lock2
@@ -122,7 +157,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 		rf.currentTerm = args.Term
 		rf.state = FOLLOWER
 		rf.resetElectionTimer()
-		DPrintf("turning to follower in AE")
+		DPrintf("leader %v turning to follower in AE\n", rf.me)
 	} else if rf.state == CANDIDATE && args.Term == rf.currentTerm {
 		//	if this rf is a candidiate, but there is already a leader in the cluster
 		DPrintf("---- receive AE from %v when being a candidate, me = %v--------\n", args.LeaderId, rf.me)
@@ -131,10 +166,12 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 		rf.resetElectionTimer()
 	}
 
-	DPrintf("rf.log len :%v, prevlogIndex : %v \n", len(rf.log), args.PrevLogIndex)
+	DPrintf("server %v log len :%v, prevlogIndex : %v \n", rf.me, len(rf.log), args.PrevLogIndex)
 	// not enough log
+	reply.XLen = len(rf.log)
 	if len(rf.log) <= args.PrevLogIndex {
 		DPrintf("AE fail, args.prevLogIndex >= current log len")
+		reply.NextIndex = len(rf.log)
 		reply.Success = false
 		return
 	}
@@ -148,20 +185,31 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 
 	if entry.Term != args.PrevLogTerm {
 		reply.Success = false
+		// optimize AE rollback
+		reply.XTerm = entry.Term
+		reply.XIndex = args.PrevLogIndex
+		for reply.XIndex > 0 && rf.log[reply.XIndex - 1].Term == entry.Term {
+			reply.XIndex --
+		}
 		DPrintf("AE match fail, leader %v term = %v , follower %v term = %v \n", args.LeaderId, args.Term, rf.me, rf.currentTerm)
-		DPrintf("entry.term = %v, prevLogTerm = %v\n", entry.Term, args.PrevLogTerm)
+		DPrintf("entry.term = %v, prevLogTerm = %v, prevLogIndex = %v\n", entry.Term, args.PrevLogTerm, args.PrevLogIndex)
+		DPrintf("XIndex = %v, XTerm = %v, XLen = %v \n", reply.XIndex, reply.XTerm, reply.XLen)
 	} else {
 		DPrintf("AE match success, leader: %v, follower:%v \n", args.LeaderId, rf.me)
 		reply.Success = true
 		rf.resetElectionTimer()
 		rf.log = rf.log[:args.PrevLogIndex + 1]   // trim right
 		rf.log = append(rf.log, args.Entries...)
+		if args.LeaderCommit > rf.commitIndex {
+			_, lastIndex := rf.lastLogTermIndex()
+			rf.commitIndex = min(args.LeaderCommit, lastIndex)
+		}
 	}
 	// follower commit
-	if args.LeaderCommit > rf.commitIndex {
-		_, lastIndex := rf.lastLogTermIndex()
-		rf.commitIndex = min(args.LeaderCommit, lastIndex)
-	}
+	//if args.LeaderCommit > rf.commitIndex {
+	//	_, lastIndex := rf.lastLogTermIndex()
+	//	rf.commitIndex = min(args.LeaderCommit, lastIndex)
+	//}
 
 	DPrintf("follower %v's commitIndex : %v, applyIndex : %v\n", rf.me, rf.commitIndex, rf.lastApplied)
 	DPrintf("follower %v's log : %v\n", rf.me, rf.log)

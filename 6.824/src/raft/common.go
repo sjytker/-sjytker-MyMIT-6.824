@@ -1,7 +1,6 @@
 package raft
 
 import (
-	"fmt"
 	"math/rand"
 	"time"
 )
@@ -46,7 +45,7 @@ func (rf *Raft) lastLogTermIndex()(int, int) {
 
 func (rf *Raft) PrevLogTermIndex(index int)(int, int) {
 	for i := 0; i < len(rf.peers); i ++ {
-		fmt.Println(rf.matchIndex[i], rf.nextIndex[i])
+		DPrintf("%v %v\n", rf.matchIndex[i], rf.nextIndex[i])
 	}
 	DPrintf("leader %v getting server %v prev ", rf.me, index)
 	prevIdx := rf.nextIndex[index] - 1

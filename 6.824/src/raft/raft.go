@@ -18,15 +18,14 @@ package raft
 //
 
 import (
-	"fmt"
 	"sync"
 	"time"
 )
 import "sync/atomic"
 import "../labrpc"
 
-// import "bytes"
-// import "../labgob"
+import "bytes"
+import "../labgob"
 
 
 
@@ -106,6 +105,13 @@ func (rf *Raft) persist() {
 	// e.Encode(rf.yyy)
 	// data := w.Bytes()
 	// rf.persister.SaveRaftState(data)
+	w := new(bytes.Buffer)
+	e := labgob.NewEncoder(w)
+	e.Encode(rf.currentTerm)
+	e.Encode(rf.voteFor)
+	e.Encode(rf.log)
+	data := w.Bytes()
+	rf.persister.SaveRaftState(data)
 }
 
 
@@ -194,7 +200,7 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
  	if args.Term > rf.currentTerm {
 		rf.currentTerm = args.Term
 		rf.state = FOLLOWER
-		rf.voteFor = -1
+	//	rf.voteFor = -1     // todo: not for sure if it is necessary
 	}
 
 }
@@ -393,7 +399,7 @@ func (rf * Raft) Election() {
 	rf.state = CANDIDATE
 	rf.Unlock("lock1 in election")   // lock1
 	count := rf.SendRequest()
-	fmt.Printf("candidate %v request count : %v, len(rf.peers) / 2: %v \n", rf.me, count, len(rf.peers) / 2)
+	DPrintf("candidate %v request count : %v, len(rf.peers) / 2: %v \n", rf.me, count, len(rf.peers) / 2)
 
 	rf.Lock("lock2 in election") // lock2
 	if rf.state == CANDIDATE && count >= len(rf.peers) / 2 {
@@ -481,7 +487,10 @@ func (rf *Raft) Apply() {
 	defer rf.Unlock("Lock in apply")
 	defer rf.applyTimer.Reset(ApplyInterval)
 
+	tag := false
+	DPrintf("sever %v starts to apply \n", rf.me)
 	for i := rf.lastApplied + 1; i <= rf.commitIndex; i ++ {
+		tag = true
 		msg := ApplyMsg{
 			CommandValid: true,
 			Command:      rf.log[i].Command,
@@ -489,11 +498,23 @@ func (rf *Raft) Apply() {
 		}
 		rf.applyCh <- msg
 	}
+	if !tag {
+		DPrintf("sever %v apply nothing \n", rf.me)
+	}
 	if rf.commitIndex > rf.lastApplied {
-		DPrintf("server %v lastApplied = %v, has applied to %v \n", rf.me, rf.lastApplied, rf.commitIndex)
+		DPrintf("server %v lastApplied = %v, commitIndex = %v, log = %v \n", rf.me, rf.lastApplied, rf.commitIndex, rf.log)
 		rf.lastApplied = rf.commitIndex
 	}
 
+}
+
+func (rf *Raft) containsXTerm(XTerm int, rightBound int) bool {
+	for i := 0; i < rightBound; i ++ {
+		if rf.log[i].Term == XTerm {
+			return true
+		}
+	}
+	return false
 }
 
 
@@ -540,7 +561,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
 	rf.readPersist(persister.ReadRaftState())
 
 	t := GetRandElectionTime()
-	fmt.Printf("server %v's random election time : %v\n", rf.me, t)
+	DPrintf("server %v's random election time : %v\n", rf.me, t)
 	rf.electionTimer = time.NewTimer(t)
 	log := Log{
 		Command: "",
@@ -551,7 +572,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
 		rf.appendEntriesTimer[i] = time.NewTimer(beatPeriod)
 	}
 	//rf.nextIndex = next
-	fmt.Printf("There are %v peers \n", n)
+	DPrintf("There are %v peers \n", n)
 	go rf.Periodic()
 	return rf
 }
