@@ -145,29 +145,25 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 	rf.Lock("lock in AE")
 	defer rf.Unlock("lock in AE")
 
+	DPrintf("server %v receiving AE from %v\n", rf.me, args.LeaderId)
+
 	if args.Term < rf.currentTerm {
 		reply.Success = false
 		reply.Term = rf.currentTerm
 		return
 	}
 
-	if args.Term > rf.currentTerm {
-		// if this rf is a leader, but another leader's term is larger.
-		//	reply.Success = false
-		rf.currentTerm = args.Term
-		rf.state = FOLLOWER
-		rf.resetElectionTimer()
-		DPrintf("leader %v turning to follower in AE\n", rf.me)
-	} else if rf.state == CANDIDATE && args.Term == rf.currentTerm {
-		//	if this rf is a candidiate, but there is already a leader in the cluster
-		DPrintf("---- receive AE from %v when being a candidate, me = %v--------\n", args.LeaderId, rf.me)
-		rf.state = FOLLOWER
-		//	reply.Success = false
-		rf.resetElectionTimer()
+	rf.resetElectionTimer()
+	rf.currentTerm = args.Term
+	rf.changeRole(FOLLOWER)
+	rf.persist()
+
+	// heartbeat, no entries
+	if len(args.Entries) == 0 {
+		//	reply.Success = true
+		DPrintf("server %v receive a heartbeat\n", rf.me)
 	}
 
-	DPrintf("server %v log len :%v, prevlogIndex : %v \n", rf.me, len(rf.log), args.PrevLogIndex)
-	// not enough log
 	reply.XLen = len(rf.log)
 	if len(rf.log) <= args.PrevLogIndex {
 		DPrintf("AE fail, args.prevLogIndex >= current log len")
@@ -176,10 +172,9 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 		return
 	}
 
-	// heartbeat, no entries
-	if len(args.Entries) == 0{
-		reply.Success = true
-	}
+	DPrintf("server %v log len :%v, prevlogIndex : %v \n", rf.me, len(rf.log), args.PrevLogIndex)
+	// not enough log
+
 
 	entry := rf.log[args.PrevLogIndex]
 
@@ -197,9 +192,9 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 	} else {
 		DPrintf("AE match success, leader: %v, follower:%v \n", args.LeaderId, rf.me)
 		reply.Success = true
-		rf.resetElectionTimer()
 		rf.log = rf.log[:args.PrevLogIndex + 1]   // trim right
 		rf.log = append(rf.log, args.Entries...)
+		rf.persist()
 		if args.LeaderCommit > rf.commitIndex {
 			_, lastIndex := rf.lastLogTermIndex()
 			rf.commitIndex = min(args.LeaderCommit, lastIndex)
@@ -218,17 +213,17 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 
 func (rf *Raft) LeaderCommit() {
 
-	for i := rf.commitIndex + 1; i <= len(rf.log); i ++ {
+	for i := rf.commitIndex + 1; i < len(rf.log); i ++ {
 		cnt := 0
 		for _,t := range rf.matchIndex {
 			if t >= i{
 				cnt ++
+				if cnt > len(rf.peers) / 2 {
+					rf.commitIndex = i
+					DPrintf("leader %v commit index:%v", rf.me, i)
+					break
+				}
 			}
-		}
-		if cnt > len(rf.peers) / 2 {
-			rf.commitIndex = i
-		} else {
-			break
 		}
 	}
 }

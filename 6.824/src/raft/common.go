@@ -8,7 +8,7 @@ import (
 
 const (
 	electionTimeOut = 300 * time.Millisecond
-	beatPeriod = 150 * time.Millisecond
+	beatPeriod = 100 * time.Millisecond
 	RPCTimeout = 100 * time.Millisecond
 	ApplyInterval = 100 * time.Millisecond
 )
@@ -38,6 +38,7 @@ func GetRandElectionTime() time.Duration{
 
 
 func (rf *Raft) lastLogTermIndex()(int, int) {
+	DPrintf("getting server %v lastlogTermIndex : %v \n", rf.me, rf.log)
 	n := len(rf.log)
 	return rf.log[n - 1].Term, n - 1
 }
@@ -57,6 +58,13 @@ func (rf *Raft) PrevLogTermIndex(index int)(int, int) {
 func (rf *Raft) resetAETimer(index int) {
 	rf.appendEntriesTimer[index].Stop()
 	rf.appendEntriesTimer[index].Reset(beatPeriod)
+}
+
+func (rf *Raft) AENow() {
+	for i, _ := range rf.appendEntriesTimer {
+		rf.appendEntriesTimer[i].Stop()
+		rf.appendEntriesTimer[i].Reset(0)
+	}
 }
 
 
@@ -86,10 +94,4 @@ func (rf *Raft) Unlock(m string) {
 	rf.mu.Unlock()
 //	rf.lockSeq = rf.lockSeq[:len(rf.lockSeq) - 1]
 	//DPrintf("server %v releasing %v \n", rf.me, m)
-}
-
-
-func (rf *Raft) PrintLog() {
-	DPrintf("leader %v log len: %v, log : %v, lastApplied : %v, commitIndex : %v\n", rf.me, len(rf.log), rf.log, rf.lastApplied, rf.commitIndex)
-	//DPrintf("other peers' log: \n")
 }

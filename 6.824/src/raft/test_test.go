@@ -8,7 +8,10 @@ package raft
 // test with the original before submitting.
 //
 
-import "testing"
+import (
+	"log"
+	"testing"
+)
 import "fmt"
 import "time"
 import "math/rand"
@@ -399,8 +402,8 @@ func TestBackup2B(t *testing.T) {
 	// put leader and one follower in a partition
 	leader1 := cfg.checkOneLeader()
 
-	DPrintf("**************TestBackup2B, step1, 5 in total, 2 alive, 3 dead ********** \n")
-	DPrintf("**************TestBackup2B, putting 50 cmds that won't commit ********** \n")
+	log.Printf("**************TestBackup2B, step1, 5 in total, 2 alive, 3 dead ********** \n")
+	log.Printf("**************TestBackup2B, putting 50 cmds that won't commit ********** \n")
 	cfg.disconnect((leader1 + 4) % servers)
 	cfg.disconnect((leader1 + 2) % servers)
 	cfg.disconnect((leader1 + 3) % servers)
@@ -412,8 +415,8 @@ func TestBackup2B(t *testing.T) {
 
 	time.Sleep(RaftElectionTimeout / 2)
 
-	DPrintf("**************TestBackup2B, step2, 5 in total, 3 alive, 2 dead ********** \n")
-	DPrintf("**************TestBackup2B, putting 50 cmds that will commit ********** \n")
+	log.Printf("**************TestBackup2B, step2, 5 in total, 3 alive, 2 dead ********** \n")
+	log.Printf("**************TestBackup2B, putting 50 cmds that will commit ********** \n")
 	cfg.disconnect((leader1 + 0) % servers)
 	cfg.disconnect((leader1 + 1) % servers)
 
@@ -435,8 +438,8 @@ func TestBackup2B(t *testing.T) {
 	}
 	cfg.disconnect(other)
 
-	DPrintf("**************TestBackup2B, step3, 5 in total, 2 alive, 3 dead, by shutting down one living ********** \n")
-	DPrintf("**************TestBackup2B, putting 50 cmds that won't commit ********** \n")
+	log.Printf("**************TestBackup2B, dead : %v, %v, %v, leader : %v\n", (leader1 + 0) % servers, (leader1 + 1) % servers, other, leader2)
+	log.Printf("**************TestBackup2B, putting 50 cmds that won't commit ********** \n")
 	// lots more commands that won't commit
 	for i := 0; i < 50; i++ {
 		cfg.rafts[leader2].Start(rand.Int())
@@ -444,8 +447,8 @@ func TestBackup2B(t *testing.T) {
 
 	time.Sleep(RaftElectionTimeout / 2)
 
-	DPrintf("**************TestBackup2B, step4, 3 alive, leader1 start, leader2 down ********** \n")
-	DPrintf("**************TestBackup2B, putting 50 cmds that will commit ********** \n")
+	log.Printf("**************TestBackup2B, live : %v, %v, %v, no leader\n", (leader1 + 0) % servers, (leader1 + 1) % servers, other)
+	log.Printf("**************TestBackup2B, putting 50 cmds that will commit ********** \n")
 	// bring original leader back to life,
 	for i := 0; i < servers; i++ {
 		cfg.disconnect(i)
@@ -459,7 +462,7 @@ func TestBackup2B(t *testing.T) {
 		cfg.one(rand.Int(), 3, true)
 	}
 
-	DPrintf("**************TestBackup2B, step5, 5 in total, 5 alive, check again ********** \n")
+	log.Printf("**************TestBackup2B, step5, 5 in total, 5 alive, check again ********** \n")
 	// now everyone
 	for i := 0; i < servers; i++ {
 		cfg.connect(i)
@@ -678,11 +681,13 @@ func TestPersist32C(t *testing.T) {
 
 	cfg.begin("Test (2C): partitioned leader and one follower crash, leader restarts")
 
+	log.Printf("*****TestPersist32C, before one 101*****\n")
 	cfg.one(101, 3, true)
 
 	leader := cfg.checkOneLeader()
 	cfg.disconnect((leader + 2) % servers)
 
+	log.Printf("*****TestPersist32C, before one 102*****\n")
 	cfg.one(102, 2, true)
 
 	cfg.crash1((leader + 0) % servers)
@@ -691,11 +696,13 @@ func TestPersist32C(t *testing.T) {
 	cfg.start1((leader + 0) % servers)
 	cfg.connect((leader + 0) % servers)
 
+	log.Printf("*****TestPersist32C, before one 103*****\n")
 	cfg.one(103, 2, true)
 
 	cfg.start1((leader + 1) % servers)
 	cfg.connect((leader + 1) % servers)
 
+	log.Printf("*****TestPersist32C, before one 104*****\n")
 	cfg.one(104, servers, true)
 
 	cfg.end()
@@ -718,6 +725,7 @@ func TestFigure82C(t *testing.T) {
 
 	cfg.begin("Test (2C): Figure 8")
 
+	log.Printf("begin TestFigure82C, all alive, cfg.one, expect 1\n")
 	cfg.one(rand.Int(), 1, true)
 
 	nup := servers
@@ -762,6 +770,8 @@ func TestFigure82C(t *testing.T) {
 		}
 	}
 
+	log.Printf("TestFigure82C, finished random putting cmd, always keeping 3 server alive\n")
+	log.Printf("TestFigure82C, cfg.one, expect 5\n")
 	cfg.one(rand.Int(), servers, true)
 
 	cfg.end()
@@ -803,6 +813,7 @@ func TestFigure8Unreliable2C(t *testing.T) {
 
 	cfg.begin("Test (2C): Figure 8 (unreliable)")
 
+	log.Printf("begin TestFigure8Unreliable2C, all alive, cfg.one, expect 1\n")
 	cfg.one(rand.Int()%10000, 1, true)
 
 	nup := servers
@@ -846,6 +857,8 @@ func TestFigure8Unreliable2C(t *testing.T) {
 		}
 	}
 
+	log.Printf("TestFigure8Unreliable2C, finished random putting cmd, always keeping 3 server alive\n")
+	log.Printf("TestFigure8Unreliable2C, cfg.one, expect 5\n")
 	cfg.one(rand.Int()%10000, servers, true)
 
 	cfg.end()
