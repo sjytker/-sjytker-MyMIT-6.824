@@ -14,18 +14,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="428b95ac-c9d1-4caa-b44b-264550ee0976" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/kvraft/tmp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/kvraft/tmp1" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/kvraft/Aout" beforeDir="false" afterPath="$PROJECT_DIR$/src/kvraft/Aout" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/kvraft/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/kvraft/client.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/kvraft/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/kvraft/common.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/kvraft/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/kvraft/config.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/kvraft/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/kvraft/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/kvraft/test_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/kvraft/test_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/playground.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/playground.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/raft/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/raft/common.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/raft/raft.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/raft/raft.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/raft/tester" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/遇到的问题.md" beforeDir="false" afterPath="$PROJECT_DIR$/遇到的问题.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -77,6 +73,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\distributed_system\6.824\src" />
       <recent name="D:\distributed_system\6.824\src\main" />
       <recent name="D:\distributed_system\6.824\src\mr" />
     </key>
@@ -164,10 +161,11 @@
       <screen x="3000" y="0" width="2560" height="1409" />
     </state>
     <state x="3949" y="452" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1606035691717" />
-    <state x="502" y="293" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1606982122727">
-      <screen x="0" y="0" width="1500" height="970" />
+    <state x="3857" y="426" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1607945838619">
+      <screen x="3000" y="0" width="2560" height="1409" />
     </state>
     <state x="502" y="293" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1606982122727" />
+    <state x="3857" y="426" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1607945838619" />
     <state x="3093" y="93" width="2375" height="1224" key="DirDiffDialog" timestamp="1605880748004">
       <screen x="3000" y="0" width="2560" height="1409" />
     </state>

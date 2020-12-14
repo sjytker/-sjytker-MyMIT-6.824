@@ -543,17 +543,16 @@ func (rf *Raft) Periodic() {
 }
 
 func (rf *Raft) Apply() {
-
+	defer rf.applyTimer.Reset(ApplyInterval)
 	// rf.commitIndex is share variable, might be changed in AEtoPeer
 	// should be locked and acquire
 	DPrintf("server %v trying to acquire apply lock, seq = %v\n", rf.me, rf.LockSeq)
+
 	rf.Lock("Lock in apply")
 	commitIndex := rf.commitIndex
-	rf.Unlock("Lock in apply")
 	DPrintf("server %v acquire apply lock finish\n", rf.me)
 
-	defer rf.applyTimer.Reset(ApplyInterval)
-
+	msgs := make([]ApplyMsg, 0, rf.commitIndex-rf.lastApplied)
 	tag := false
 	DPrintf("server %v starts to apply, lastApplied = %v, commitIndex = %v \n", rf.me, rf.lastApplied, commitIndex)
 	for i := rf.lastApplied + 1; i <= commitIndex; i ++ {
@@ -563,18 +562,27 @@ func (rf *Raft) Apply() {
 			Command:      rf.log[i].Command,
 			CommandIndex: i,
 		}
-		DPrintf("server %v is applying msg : %v \n", rf.me, msg)
-		rf.applyCh <- msg
-		DPrintf("server %v has applied msg : %v \n", rf.me, msg)
+		msgs = append(msgs, msg)
 	}
+	rf.Unlock("Lock in apply")
+
 	if !tag {
 		DPrintf("server %v apply nothing \n", rf.me)
 	}
 
-	if commitIndex > rf.lastApplied {
-		rf.lastApplied = commitIndex
-		DPrintf("server %v lastApplied = %v, commitIndex = %v, log = %v \n", rf.me, rf.lastApplied, commitIndex, rf.log)
+	for _,msg := range msgs {
+		DPrintf("server %v is applying msg : %v \n", rf.me, msg)
+		rf.applyCh <- msg
+		rf.Lock("applyLogs2")
+		rf.lastApplied = msg.CommandIndex
+		rf.Unlock("applyLogs2")
+		DPrintf("server %v has applied msg : %v \n", rf.me, msg)
 	}
+
+	//if commitIndex > rf.lastApplied {
+	//	rf.lastApplied = commitIndex
+	//	DPrintf("server %v lastApplied = %v, commitIndex = %v, log = %v \n", rf.me, rf.lastApplied, commitIndex, rf.log)
+	//}
 }
 
 func (rf *Raft) containsXTerm(XTerm int, rightBound int) bool {

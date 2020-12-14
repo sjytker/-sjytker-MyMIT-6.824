@@ -43,6 +43,13 @@ func (kv *KVServer) Get(args *GetArgs, reply *GetReply) {
 
 	DPrintf("kvleader %v receive Get : %v\n", kv.me, args.Key)
 	DPrintf("kvleader %v data : %v\n", kv.me, kv.data)
+
+	_, isLeader := kv.rf.GetState()
+	if !isLeader {
+		reply.Err = ErrWrongLeader
+		return
+	}
+
 	serverOp := Op{
 		Method: "Get",
 		Key:     args.Key,
@@ -105,17 +112,17 @@ func (kv *KVServer) waitForRaft(op Op) (res NotifyMsg) {
 
 	DPrintf("kvleader %v has start cmd, waits for applyCh\n", kv.me)
 	select {
-	case msg :=<- ch:
+	case res =<- ch:
 		DPrintf("kvleader %v apply finish, op = %v\n", kv.me, op)
 		kv.removeCh(op.RequestId)
-		return msg
+		return
 	case <- waitTimer.C:
 		DPrintf("kvleader %v waitTimeout, return to client, op : %v\n", kv.me, op)
 		res.Err = ErrTimeOut
 		kv.removeCh(op.RequestId)
 		return
-	case <- kv.stopCh:
-		return
+	//case <- kv.stopCh:
+	//	return
 	}
 }
 
@@ -132,40 +139,38 @@ func (kv *KVServer) WaitApplyCh() {
 				continue
 			}
 
+
 			op := msg.Command.(Op)
 			repeat := kv.CheckApplied(op.MsgId, op.ClientId)
 
 			DPrintf("kvserver %v receive from applyCh, op = %v, repeat = %v\n", kv.me, op, repeat)
-
 			kv.mu.Lock()
 			if !repeat && op.Method == "Put" {
 				kv.data[op.Key] = op.Value
 				DPrintf("kvserver %v applying method = Put, finish, op : %v: \n", kv.me, op)
 				kv.lastApplied[op.ClientId] = op.MsgId
 			} else if !repeat && op.Method == "Append" {
-				if v, ok := kv.data[op.Key]; ok {
-					newS := v + op.Value
-					kv.data[op.Key] = newS
-					kv.lastApplied[op.ClientId] = op.MsgId
-					DPrintf("kvserver %v applying method = Append, newS = %v, op : %v\n", kv.me, newS, op)
-				}
+				v:= kv.data[op.Key]
+				newS := v + op.Value
+				kv.data[op.Key] = newS
+				kv.lastApplied[op.ClientId] = op.MsgId
+				DPrintf("kvserver %v applying method = Append, newS = %v, op : %v\n", kv.me, newS, op)
 			} else if op.Method == "Get"{
 				DPrintf("kvserver %v applying method = Get, do nothing but notify\n", kv.me)
 			}
-			//else {
-			//	panic("unknow op method\n")
-			//}
+			
 			if ch, ok := kv.notifyData[op.RequestId]; ok {
 				ch <- NotifyMsg{
 					Err:   OK,
 					Value: kv.data[op.Key],
 				}
 			}
+			kv.mu.Unlock()
 			DPrintf("kvserver %v notify finish, op = %v\n", kv.me, op)
 		case <- kv.stopCh:
 			return
 		}
-		kv.mu.Unlock()
+
 	}
 }
 

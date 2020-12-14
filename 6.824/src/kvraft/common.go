@@ -7,7 +7,7 @@ const (
 	ErrNoKey       = "ErrNoKey"
 	ErrWrongLeader = "ErrWrongLeader"
 	ErrTimeOut 	   = "ErrTimeOut"
-	RPCTimeout = 150 * time.Millisecond
+	ChangeLeaderInterval = 20 * time.Millisecond
 	FindLeaderTimeout = 300 * time.Millisecond
 	WaitTimeout = 500 * time.Millisecond
 )

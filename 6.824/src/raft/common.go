@@ -11,6 +11,7 @@ const (
 	beatPeriod = 100 * time.Millisecond
 	RPCTimeout = 150 * time.Millisecond
 	ApplyInterval = 100 * time.Millisecond
+
 )
 
 
