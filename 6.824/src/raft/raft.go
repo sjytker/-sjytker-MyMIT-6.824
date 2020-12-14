@@ -546,9 +546,11 @@ func (rf *Raft) Apply() {
 
 	// rf.commitIndex is share variable, might be changed in AEtoPeer
 	// should be locked and acquire
+	DPrintf("server %v trying to acquire apply lock, seq = %v\n", rf.me, rf.LockSeq)
 	rf.Lock("Lock in apply")
 	commitIndex := rf.commitIndex
 	rf.Unlock("Lock in apply")
+	DPrintf("server %v acquire apply lock finish\n", rf.me)
 
 	defer rf.applyTimer.Reset(ApplyInterval)
 

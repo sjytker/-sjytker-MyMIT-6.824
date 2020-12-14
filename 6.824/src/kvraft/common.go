@@ -9,13 +9,15 @@ const (
 	ErrTimeOut 	   = "ErrTimeOut"
 	RPCTimeout = 150 * time.Millisecond
 	FindLeaderTimeout = 300 * time.Millisecond
-	ApplyTimeout = 300 * time.Millisecond
+	WaitTimeout = 500 * time.Millisecond
 )
 
 type Op struct {
-	Command string
+	Method string
 	Key string
 	Value string
+	ClientId int64
+	MsgId int64
 	RequestId int64
 }
 
@@ -60,3 +62,8 @@ type GetStateReply struct {
 	LeaderId int
 }
 
+
+type NotifyMsg struct {
+	Err Err
+	Value string
+}

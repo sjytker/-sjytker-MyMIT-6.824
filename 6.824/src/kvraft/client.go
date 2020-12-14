@@ -16,6 +16,7 @@ type Clerk struct {
 	dead   int32
 	leaderId int
 	clientId int64
+	leaderMe int
 	mu     sync.Mutex
 	stopCh chan struct{}
 
@@ -86,8 +87,13 @@ func (ck *Clerk) Get(key string) string {
 
 	for !ck.killed() {
 		reply := GetReply{}
-		if ok := ck.servers[ck.leaderId].Call("KVServer.Get", &args, &reply); !ok {
+		leaderId := ck.leaderId
+		DPrintf("client %v think current leader is : %v, leaderMe %v: \n", ck.clientId, leaderId, ck.leaderMe)
+		if leaderId == -1 {
+			time.Sleep(100 * time.Millisecond)
+		} else if ok := ck.servers[leaderId].Call("KVServer.Get", &args, &reply); !ok {
 			DPrintf("client rpc fail in KVServer.Get, retry\n")
+			time.Sleep(50 * time.Millisecond)
 			continue
 		}
 
@@ -97,14 +103,21 @@ func (ck *Clerk) Get(key string) string {
 			return reply.Value
 		case ErrWrongLeader:
 			DPrintf("client %v get sent to deposed leader\n", ck.clientId)
-			time.Sleep(50 * time.Millisecond)
+			ck.findLeaderNow()
+			for ck.leaderId == -1 {
+				time.Sleep(50 * time.Millisecond)
+			}
 		case ErrNoKey:
 			DPrintf("client %v get got nokey err\n", ck.clientId)
 			return ""
 		case ErrTimeOut:
-			continue
+			DPrintf("client %v get ErrTimeOut, args: %v\n", ck.clientId, args)
+			ck.findLeaderNow()
+			for ck.leaderId == -1 {
+				time.Sleep(50 * time.Millisecond)
+			}
 		default:
-			DPrintf("rpc fail\n")
+			DPrintf("client %v get rpc fail\n", ck.clientId)
 		}
 	}
 
@@ -141,10 +154,10 @@ func (ck *Clerk) PutAppend(key string, value string, op string) {
 	for !ck.killed() {
 		reply := PutAppendReply{}
 		leaderId := ck.leaderId
-		DPrintf("client %v think current leader is : %v\n", ck.clientId, leaderId)
-		if ck.leaderId == -1 {
+		DPrintf("client %v think current leader is : %v, leaderMe %v: \n", ck.clientId, leaderId, ck.leaderMe)
+		if leaderId == -1 {
 			time.Sleep(100 * time.Millisecond)
-		} else if ok := ck.servers[ck.leaderId].Call("KVServer.PutAppend", &args, &reply); !ok {
+		} else if ok := ck.servers[leaderId].Call("KVServer.PutAppend", &args, &reply); !ok {
 			DPrintf("clerk rpc fail in KVServer.PutAppend, args : %v\n", args)
 		}
 
@@ -155,16 +168,20 @@ func (ck *Clerk) PutAppend(key string, value string, op string) {
 		case ErrWrongLeader:
 			DPrintf("client %v putAppend sent to deposed leader %v, args: %v\n", ck.clientId, leaderId, args)
 			ck.findLeaderNow()
-			for ck.leaderId == leaderId {
+			for ck.leaderId == -1 {
 				time.Sleep(50 * time.Millisecond)
 			}
 		case ErrNoKey:
 			DPrintf("client %v putAppend got nokey err, args: %v\n", ck.clientId, args)
 			return
 		case ErrTimeOut:
-			continue
+			DPrintf("client %v putAppend ErrTimeOut, args: %v\n", ck.clientId, args)
+			ck.findLeaderNow()
+			for ck.leaderId == -1 {
+				time.Sleep(50 * time.Millisecond)
+			}
 		default:
-			DPrintf("client %v rpc fail\n", ck.clientId)
+			DPrintf("client %v putAppend rpc fail\n", ck.clientId)
 		}
 	}
 }
@@ -195,7 +212,9 @@ func (ck *Clerk) FindLeader() {
 
 	args := GetStateArgs{}
 	defer ck.resetFLTimer()
-	// RPCTimer := time.NewTimer(RPCTimeout)
+
+	ck.leaderId = -1
+	ck.leaderMe = -1
 	wg := sync.WaitGroup{}
 	wg.Add(len(ck.servers))
 
@@ -208,6 +227,7 @@ func (ck *Clerk) FindLeader() {
 				if reply.IsLeader && reply.Term >= ck.Term{
 					ck.mu.Lock()
 					ck.leaderId = i
+					ck.leaderMe = reply.LeaderId
 					ck.Term = reply.Term
 					DPrintf("current leader :  i == %v, me == %v, term == %v\n", i, reply.LeaderId, ck.Term)
 					ck.mu.Unlock()
@@ -215,13 +235,13 @@ func (ck *Clerk) FindLeader() {
 				//	DPrintf("kvserver %v is not leader", i)
 				}
 			} else {
-				DPrintf("client rpc fail in KVServer.GetState")
+				DPrintf("client rpc fail in FindLeader")
 			}
 			wg.Done()
 		}(i)
 	}
 	wg.Wait()
-	DPrintf("client %v find leader finish\n", ck.clientId)
+	DPrintf("client %v find leader finish, leaderId = %v, leaderMe = %v\n", ck.clientId, ck.leaderId, ck.leaderMe)
 }
 
 func (ck *Clerk) resetFLTimer() {
