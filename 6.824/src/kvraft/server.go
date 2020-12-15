@@ -7,16 +7,10 @@ import (
 	"../raft"
 	"sync"
 	"sync/atomic"
-<<<<<<< HEAD
 	"time"
 )
 
 const Debug = 1
-=======
-)
-
-const Debug = 0
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 
 func DPrintf(format string, a ...interface{}) (n int, err error) {
 	if Debug > 0 {
@@ -26,208 +20,163 @@ func DPrintf(format string, a ...interface{}) (n int, err error) {
 }
 
 
-<<<<<<< HEAD
 
-=======
-type Op struct {
-	// Your definitions here.
-	// Field names must start with capital letters,
-	// otherwise RPC will break.
-}
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 
 type KVServer struct {
 	mu      sync.Mutex
 	me      int
 	rf      *raft.Raft
 	applyCh chan raft.ApplyMsg
+
 	dead    int32 // set by Kill()
-<<<<<<< HEAD
 	stopCh chan struct{}
 	data map[string]string
-	vis map[int64]map[int64]bool
-
 	findLeaderTimer *time.Timer
-=======
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
-
 	maxraftstate int // snapshot if log grows this big
-
+	lastApplied map[int64]int64
+	notifyData map[int64]chan NotifyMsg
 	// Your definitions here.
 }
 
 
 func (kv *KVServer) Get(args *GetArgs, reply *GetReply) {
-<<<<<<< HEAD
-	kv.mu.Lock()
-	defer kv.mu.Unlock()
-
-	ApplyTimer := time.NewTimer(ApplyTimeout)
 
 	DPrintf("kvleader %v receive Get : %v\n", kv.me, args.Key)
 	DPrintf("kvleader %v data : %v\n", kv.me, kv.data)
-	if _, ok := kv.vis[args.ClientId][args.MsgId]; ok {
-		DPrintf("kvserver %v receive Get again, just return, key = %v\n", kv.me, args.Key)
-		reply.Err = OK
+
+	_, isLeader := kv.rf.GetState()
+	if !isLeader {
+		reply.Err = ErrWrongLeader
 		return
 	}
-	serverOp := Op{
-		Command: "Get",
-		Key:     args.Key,
-		Value:   "",
-		RequestId: nrand(),
-	}
-	_, _, isLeader := kv.rf.Start(serverOp)
-	reply.IsLeader = isLeader
 
-	for isLeader {
-		DPrintf("kvleader %v has start get cmd, waits for applyCh\n", kv.me)
-		select {
-		case <- kv.applyCh:
-			DPrintf("kvleader %v apply get cmd finish\n", kv.me)
-			if v, ok := kv.data[args.Key]; ok {
-				reply.Value = v
-				reply.Err = OK
-			} else {
-				reply.Value = ""
-				reply.Err = ErrNoKey
-			}
-			DPrintf("kvleader %v get finish, data = %v\n", kv.me, kv.data)
-			return
-		case <- ApplyTimer.C:
-			DPrintf("ApplyTimeout in kvleader %v get\n", kv.me)
-			time.Sleep(50 * time.Millisecond)
-			_, isLeader = kv.rf.GetState()
-		case <- kv.stopCh:
-			return
-		}
+	serverOp := Op{
+		Method: "Get",
+		Key:     args.Key,
+		ClientId:	args.ClientId,
+		MsgId:	args.MsgId,
+		RequestId:	nrand(),
 	}
-	reply.Value = ""
-	reply.Err = ErrWrongLeader
+
+	// situation : this msg is late, another same one is applied
+//	repeat := kv.CheckApplied(args.MsgId, args.ClientId)
+
+	//if !repeat {
+		res := kv.waitForRaft(serverOp)
+		reply.Err = res.Err
+		reply.Value = res.Value
+//	}
 }
 
 func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
 
-	ApplyTimer := time.NewTimer(ApplyTimeout)
-	if _, ok := kv.vis[args.ClientId][args.MsgId]; ok {
-		DPrintf("kvleader %v receive putAppend again, just return, args : %v\n", kv.me, args)
-		reply.Err = OK
+	DPrintf("kvleader %v receive Get : %v\n", kv.me, args.Key)
+	DPrintf("kvleader %v data : %v\n", kv.me, kv.data)
+
+	serverOp := Op{
+		Method: args.Op,
+		Key:     args.Key,
+		Value:   args.Value,
+		ClientId:	args.ClientId,
+		MsgId:	args.MsgId,
+		RequestId:	nrand(),
+	}
+
+	// situation : this msg is late, another same one is applied
+//	repeat := kv.CheckApplied(args.MsgId, args.ClientId)
+
+	// situation : double msg arrive, one is waiting to be applied.
+	//_, waitting := kv.notifyData[args.MsgId]
+	// after fully consideration, this situation must sent msg again
+	reply.Err = kv.waitForRaft(serverOp).Err
+}
+
+
+
+func (kv *KVServer) waitForRaft(op Op) (res NotifyMsg) {
+
+	waitTimer := time.NewTimer(WaitTimeout)
+	defer waitTimer.Stop()
+	_, _, isLeader := kv.rf.Start(op)
+
+	if !isLeader {
+		DPrintf("kvleader %v start() fail\n", kv.me)
+		res.Err = ErrWrongLeader
 		return
 	}
 
-	DPrintf("kvleader %v receive putAppend, key = %v, value = %v\n", kv.me, args.Key, args.Value)
-	//if _, ok := kv.vis[args.ClientId]; !ok {
-		kv.vis[args.ClientId] = make(map[int64]bool)
-		kv.vis[args.ClientId][args.MsgId] = true
-	//}
-	// when replicate & apply to all servers, you need all vars : cmd, k, v
-	serverOp := Op{
-		Command: args.Op,
-		Key:     args.Key,
-		Value:   args.Value,
-		RequestId: nrand(),
-	}
-	_, _, isLeader := kv.rf.Start(serverOp)
+	kv.mu.Lock()
+	ch := make(chan NotifyMsg)
+	kv.notifyData[op.RequestId] = ch
+	kv.mu.Unlock()
 
-	// leader's apply
-	ForEnd:
-	for isLeader {
-		DPrintf("kvleader %v has start putAppend cmd, waits for applyCh\n", kv.me)
-		select {
-		case msg :=<- kv.applyCh:
-			DPrintf("kvleader %v apply finish\n", kv.me)
-			op := msg.Command.(Op)
-			if op.RequestId != serverOp.RequestId {
-				DPrintf("leader has change, client should update its leader and send again, args: %v\n", args)
-				break ForEnd
-			}
-			//kv.mu.Lock()
-			//defer kv.mu.Unlock()
-			if args.Op == "Put" {
-				kv.data[args.Key] = args.Value
-				DPrintf("kvleader %v op == Put, finish, op : %v: \n", kv.me, serverOp)
-			} else {
-				if v, ok := kv.data[args.Key]; ok {
-					newS := v + args.Value
-					kv.data[args.Key] = newS
-					DPrintf("kvleader %v op == Append, newS = %v, op : %v\n", kv.me, newS, serverOp)
-				} else {
-					kv.data[args.Key] = args.Value
-					DPrintf("kvleader %v op == Append, but key is nil, looks like put, op : %v\n", kv.me, serverOp)
-				}
-			}
-			reply.Err = OK
-			DPrintf("kvleader %v start cmd finish, op : %v, data: %v\n", kv.me, serverOp, kv.data)
-			return
-		case <- ApplyTimer.C:
-			DPrintf("ApplyTimeout in kvleader %v putAppend, check if is leader, op : %v\n", kv.me, serverOp)
-		//	time.Sleep(50 * time.Millisecond)    maybe deadlock
-			_, isLeader = kv.rf.GetState()   // will get rf's lock
-		case <- kv.stopCh:
-			return
-		}
+	DPrintf("kvleader %v has start cmd, waits for applyCh\n", kv.me)
+	select {
+	case res =<- ch:
+		DPrintf("kvleader %v apply finish, op = %v\n", kv.me, op)
+		kv.removeCh(op.RequestId)
+		return
+	case <- waitTimer.C:
+		DPrintf("kvleader %v waitTimeout, return to client, op : %v\n", kv.me, op)
+		res.Err = ErrTimeOut
+		kv.removeCh(op.RequestId)
+		return
+	//case <- kv.stopCh:
+	//	return
 	}
-	reply.Err = ErrWrongLeader
-	DPrintf("kvserver %v is not a leader now, exit putAppend\n", kv.me)
-
 }
 
 
 func (kv *KVServer) WaitApplyCh() {
 
+	for {
+		DPrintf("kvserver %v waiting for applyCh\n", kv.me)
+		select {
+		case msg := <- kv.applyCh:
+			if !msg.CommandValid {
+				//todo
+				log.Fatal("________msgInvalid_______\n")
+				continue
+			}
+
+
+			op := msg.Command.(Op)
+			repeat := kv.CheckApplied(op.MsgId, op.ClientId)
+
+			DPrintf("kvserver %v receive from applyCh, op = %v, repeat = %v\n", kv.me, op, repeat)
+			kv.mu.Lock()
+			if !repeat && op.Method == "Put" {
+				kv.data[op.Key] = op.Value
+				DPrintf("kvserver %v applying method = Put, finish, op : %v: \n", kv.me, op)
+				kv.lastApplied[op.ClientId] = op.MsgId
+			} else if !repeat && op.Method == "Append" {
+				v:= kv.data[op.Key]
+				newS := v + op.Value
+				kv.data[op.Key] = newS
+				kv.lastApplied[op.ClientId] = op.MsgId
+				DPrintf("kvserver %v applying method = Append, newS = %v, op : %v\n", kv.me, newS, op)
+			} else if op.Method == "Get"{
+				DPrintf("kvserver %v applying method = Get, do nothing but notify\n", kv.me)
+			}
+
+			if ch, ok := kv.notifyData[op.RequestId]; ok {
+				ch <- NotifyMsg{
+					Err:   OK,
+					Value: kv.data[op.Key],
+				}
+			}
+			kv.mu.Unlock()
+			DPrintf("kvserver %v notify finish, op = %v\n", kv.me, op)
+		case <- kv.stopCh:
+			return
+		}
+
+	}
 }
 
 
-//func (kv *KVServer) FollowerApply() {
-//
-//	_, isLeader := kv.rf.GetState()
-//	if isLeader {
-//		return
-//	}
-//	ApplyTimer := time.NewTimer(ApplyTimeout)
-//	serverOp := Op{}
-//	msg := raft.ApplyMsg{}
-//	DPrintf("kvfollower %v waits for apply\n", kv.me)
-//
-//	select {
-//	case msg =<- kv.applyCh:
-//		serverOp = msg.Command.(Op)
-//		DPrintf("kvfollower %v receive applyCh, op: %v\n", kv.me, serverOp)
-//		kv.mu.Lock()
-//		defer kv.mu.Unlock()
-//		DPrintf("kvfollower %v aquire lock in apply\n", kv.me)
-//		if serverOp.Command == "Put" {
-//			kv.data[serverOp.Key] = serverOp.Value
-//		//	DPrintf("follower %v op == Put\n", kv.me)
-//		} else {
-//			if v, ok := kv.data[serverOp.Key]; ok {
-//				newS := v + serverOp.Value
-//				kv.data[serverOp.Key] = newS
-//			//	DPrintf("follower %v op == Append, newS = %v\n", kv.me, newS)
-//			} else {
-//				kv.data[serverOp.Key] = serverOp.Value
-//			//	DPrintf("follower %v op == Append, but key is nil, looks like put\n", kv.me)
-//			}
-//		}
-//	case <- ApplyTimer.C:
-//		DPrintf("kvfollower %v ApplyTimeout\n", kv.me)
-//	case <- kv.stopCh:
-//		return
-//	}
-//	DPrintf("kvfollower %v apply finish\n", kv.me)
-//}
 
 
-
-=======
-	// Your code here.
-}
-
-func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
-	// Your code here.
-}
-
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 //
 // the tester calls Kill() when a KVServer instance won't
 // be needed again. for your convenience, we supply
@@ -241,10 +190,7 @@ func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
 func (kv *KVServer) Kill() {
 	atomic.StoreInt32(&kv.dead, 1)
 	kv.rf.Kill()
-<<<<<<< HEAD
 	close(kv.stopCh)
-=======
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 	// Your code here, if desired.
 }
 
@@ -252,8 +198,6 @@ func (kv *KVServer) killed() bool {
 	z := atomic.LoadInt32(&kv.dead)
 	return z == 1
 }
-
-<<<<<<< HEAD
 
 
 //GetState from rpc
@@ -271,8 +215,21 @@ func (kv *KVServer) GetState(args *GetStateArgs, reply *GetStateReply)  {
 func (kv *KVServer) Periodic() {
 	go kv.WaitApplyCh()
 }
-=======
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
+
+func (kv *KVServer) CheckApplied(msgId int64, clientId int64) bool {
+	if oldMsgId, ok := kv.lastApplied[clientId]; ok {
+		return msgId == oldMsgId
+	}
+	return false
+}
+
+func (kv *KVServer) removeCh(id int64) {
+	kv.mu.Lock()
+	delete(kv.notifyData, id)
+	kv.mu.Unlock()
+}
+
+
 //
 // servers[] contains the ports of the set of
 // servers that will cooperate via Raft to
@@ -292,7 +249,6 @@ func StartKVServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persiste
 	// Go's RPC library to marshall/unmarshall.
 	labgob.Register(Op{})
 
-<<<<<<< HEAD
 	kv := KVServer{
 		mu:              sync.Mutex{},
 		me:              me,
@@ -303,25 +259,12 @@ func StartKVServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persiste
 		data:            make(map[string]string),
 		findLeaderTimer: time.NewTimer(FindLeaderTimeout),
 		maxraftstate:    maxraftstate,
-		vis: 			 make(map[int64]map[int64]bool),
+		notifyData: 	 map[int64]chan NotifyMsg{},
+		lastApplied: 	 map[int64]int64{},
 	}
 
 	kv.rf = raft.Make(servers, me, persister, kv.applyCh)
 	DPrintf("there are %v servers, me = %v\n", len(servers), me)
 	go kv.Periodic()
 	return &kv
-=======
-	kv := new(KVServer)
-	kv.me = me
-	kv.maxraftstate = maxraftstate
-
-	// You may need initialization code here.
-
-	kv.applyCh = make(chan raft.ApplyMsg)
-	kv.rf = raft.Make(servers, me, persister, kv.applyCh)
-
-	// You may need initialization code here.
-
-	return kv
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 }

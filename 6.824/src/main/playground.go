@@ -71,17 +71,24 @@ func main(){
 	//fmt.Println(len(lst))
 
 
-	vis := make(map[int]map[int]int)
+	//vis := make(map[int]map[int]int)
+	//
+	//if _, ok := vis[0][1]; ok {
+	//	fmt.Printf("got vis[0][1] : %v\n", vis[0][1])
+	//}
+	//
+	//if _, ok := vis[0][1]; !ok {
+	//	vis[0] = make(map[int]int)
+	//	vis[0][1] = 100
+	//}
+	//if _, ok := vis[0][1]; ok {
+	//	fmt.Printf("got vis[0][1] : %v\n", vis[0][1])
+	//}
 
-	if _, ok := vis[0][1]; ok {
-		fmt.Printf("got vis[0][1] : %v\n", vis[0][1])
-	}
-
-	if _, ok := vis[0][1]; !ok {
-		vis[0] = make(map[int]int)
-		vis[0][1] = 100
-	}
-	if _, ok := vis[0][1]; ok {
-		fmt.Printf("got vis[0][1] : %v\n", vis[0][1])
+	v := make(map[int]string)
+	v[0] = "123"
+	fmt.Printf("getting v[0] : %v\n", v[0])
+	if v, ok := v[1]; ok {
+		fmt.Printf("getting v[1] : %v\n", v[1])
 	}
 }

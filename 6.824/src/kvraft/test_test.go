@@ -60,17 +60,10 @@ func spawn_clients_and_wait(t *testing.T, cfg *config, ncli int, fn func(me int,
 		ca[cli] = make(chan bool)
 		go run_client(t, cfg, cli, ca[cli], fn)
 	}
-<<<<<<< HEAD
 	log.Printf("spawn_clients_and_wait: waiting for clients\n")
 	for cli := 0; cli < ncli; cli++ {
 		ok := <-ca[cli]
 		log.Printf("spawn_clients_and_wait: client %d is done\n", cli)
-=======
-	// log.Printf("spawn_clients_and_wait: waiting for clients")
-	for cli := 0; cli < ncli; cli++ {
-		ok := <-ca[cli]
-		// log.Printf("spawn_clients_and_wait: client %d is done\n", cli)
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 		if ok == false {
 			t.Fatalf("failure")
 		}
@@ -144,6 +137,7 @@ func partitioner(t *testing.T, cfg *config, ch chan bool, done *int32) {
 				}
 			}
 		}
+		log.Printf("partition servers into: %v %v\n", pa[0], pa[1])
 		cfg.partition(pa[0], pa[1])
 		time.Sleep(electionTimeout + time.Duration(rand.Int63()%200)*time.Millisecond)
 	}
@@ -199,31 +193,21 @@ func GenericTest(t *testing.T, part string, nclients int, unreliable bool, crash
 		clnts[i] = make(chan int)
 	}
 	for i := 0; i < 3; i++ {
-<<<<<<< HEAD
 		log.Printf("Iteration %v\n", i)
-=======
-		// log.Printf("Iteration %v\n", i)
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 		atomic.StoreInt32(&done_clients, 0)
 		atomic.StoreInt32(&done_partitioner, 0)
 		go spawn_clients_and_wait(t, cfg, nclients, func(cli int, myck *Clerk, t *testing.T) {
 			j := 0
 			defer func() {
-<<<<<<< HEAD
 				DPrintf("putting j into clnts \n")
-=======
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 				clnts[cli] <- j
 			}()
 			last := ""
 			key := strconv.Itoa(cli)
 			Put(cfg, myck, key, last)
 			for atomic.LoadInt32(&done_clients) == 0 {
-<<<<<<< HEAD
 				x := atomic.LoadInt32(&done_clients)
 				DPrintf("done_clients : %v \n", x)
-=======
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 				if (rand.Int() % 1000) < 500 {
 					nv := "x " + strconv.Itoa(cli) + " " + strconv.Itoa(j) + " y"
 					// log.Printf("%d: client new append %v\n", cli, nv)
@@ -238,38 +222,26 @@ func GenericTest(t *testing.T, part string, nclients int, unreliable bool, crash
 					}
 				}
 			}
-<<<<<<< HEAD
 			DPrintf("spawn_clients_and_wait complete\n")
-=======
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 		})
 
 		if partitions {
 			// Allow the clients to perform some operations without interruption
-<<<<<<< HEAD
 			DPrintf("testing partitions\n")
-=======
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 			time.Sleep(1 * time.Second)
 			go partitioner(t, cfg, ch_partitioner, &done_partitioner)
 		}
 		time.Sleep(5 * time.Second)
 
-<<<<<<< HEAD
 		DPrintf("client is about to quit\n")
 		DPrintf("partitioner is about to quit\n")
-=======
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 		atomic.StoreInt32(&done_clients, 1)     // tell clients to quit
 		atomic.StoreInt32(&done_partitioner, 1) // tell partitioner to quit
 
 		if partitions {
-<<<<<<< HEAD
 			log.Printf("wait for partitioner\n")
-=======
-			// log.Printf("wait for partitioner\n")
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 			<-ch_partitioner
+			DPrintf("ready to connect all\n")
 			// reconnect network and submit a request. A client may
 			// have submitted a request in a minority.  That request
 			// won't return until that server discovers a new term
@@ -280,11 +252,7 @@ func GenericTest(t *testing.T, part string, nclients int, unreliable bool, crash
 		}
 
 		if crash {
-<<<<<<< HEAD
 			log.Printf("shutdown servers\n")
-=======
-			// log.Printf("shutdown servers\n")
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 			for i := 0; i < nservers; i++ {
 				cfg.ShutdownServer(i)
 			}
@@ -297,26 +265,21 @@ func GenericTest(t *testing.T, part string, nclients int, unreliable bool, crash
 				cfg.StartServer(i)
 			}
 			cfg.ConnectAll()
+			log.Printf("servers restart all finish\n")
 		}
 
-<<<<<<< HEAD
 		log.Printf("wait for clients\n")
 		for i := 0; i < nclients; i++ {
 			log.Printf("read from clients %d\n", i)
 			j := <-clnts[i]
 			log.Printf("read from clients %d complete\n", i)
-=======
-		// log.Printf("wait for clients\n")
-		for i := 0; i < nclients; i++ {
-			// log.Printf("read from clients %d\n", i)
-			j := <-clnts[i]
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 			// if j < 10 {
 			// 	log.Printf("Warning: client %d managed to perform only %d put operations in 1 sec?\n", i, j)
 			// }
 			key := strconv.Itoa(i)
 			// log.Printf("Check %v for client %d\n", j, i)
 			v := Get(cfg, ck, key)
+			DPrintf("-----get complete----\n ")
 			checkClntAppends(t, i, v, j)
 		}
 
@@ -554,11 +517,7 @@ func TestOnePartition3A(t *testing.T) {
 
 	cfg.begin("Test: progress in majority (3A)")
 
-<<<<<<< HEAD
 	p1, p2 := cfg.make_partition()    // p1 has majority, leader in p2
-=======
-	p1, p2 := cfg.make_partition()
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 	cfg.partition(p1, p2)
 
 	ckp1 := cfg.makeClient(p1)  // connect ckp1 to p1
@@ -618,10 +577,7 @@ func TestOnePartition3A(t *testing.T) {
 	default:
 	}
 
-<<<<<<< HEAD
 	DPrintf("rejoin all in TestOnePartition3A, want k = 1, v = 15\n")
-=======
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 	check(cfg, t, ck, "1", "15")
 
 	cfg.end()

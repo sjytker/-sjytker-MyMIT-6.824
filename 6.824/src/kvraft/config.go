@@ -1,6 +1,8 @@
 package kvraft
 
-import "../labrpc"
+import (
+	"../labrpc"
+)
 import "testing"
 import "os"
 
@@ -174,7 +176,7 @@ func (cfg *config) ConnectAll() {
 func (cfg *config) partition(p1 []int, p2 []int) {
 	cfg.mu.Lock()
 	defer cfg.mu.Unlock()
-	// log.Printf("partition servers into: %v %v\n", p1, p2)
+
 	for i := 0; i < len(p1); i++ {
 		cfg.disconnectUnlocked(p1[i], p2)
 		cfg.connectUnlocked(p1[i], p1)
@@ -202,10 +204,7 @@ func (cfg *config) makeClient(to []int) *Clerk {
 	}
 
 	ck := MakeClerk(random_handles(ends))
-<<<<<<< HEAD
 	DPrintf("MakeClerk finish \n")
-=======
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 	cfg.clerks[ck] = endnames
 	cfg.nextClientId++
 	cfg.ConnectClientUnlocked(ck, to)
@@ -340,10 +339,7 @@ func (cfg *config) Leader() (bool, int) {
 }
 
 // Partition servers into 2 groups and put current leader in minority
-<<<<<<< HEAD
 // p1 has majority, leader in p2
-=======
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 func (cfg *config) make_partition() ([]int, []int) {
 	_, l := cfg.Leader()
 	p1 := make([]int, cfg.n/2+1)

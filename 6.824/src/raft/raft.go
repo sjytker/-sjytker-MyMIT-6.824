@@ -25,10 +25,7 @@ import (
 import "sync/atomic"
 import "../labrpc"
 
-<<<<<<< HEAD
 // import "../kvraft"
-=======
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 import "bytes"
 import "../labgob"
 
@@ -84,17 +81,12 @@ type Raft struct {
 	applyTimer *time.Timer
 	stopCh chan struct{}
 	applyCh chan ApplyMsg
-<<<<<<< HEAD
 	LockSeq []string
-=======
-	lockSeq []string
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 }
 
 // return currentTerm and whether this server
 // believes it is the leader.
 func (rf *Raft) GetState() (int, bool) {
-<<<<<<< HEAD
 //	DPrintf("server %v request getstate lock\n", rf.me, rf.lockSeq)
 	rf.Lock("rf getstate lock")
 	defer rf.Unlock("rf getstate lock")
@@ -103,14 +95,6 @@ func (rf *Raft) GetState() (int, bool) {
 }
 
 
-=======
-	rf.mu.Lock()
-	defer rf.mu.Unlock()
-	// Your code here (2A).
-	return rf.currentTerm, rf.state == LEADER
-}
-
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 //
 // save Raft's persistent state to stable storage,
 // where it can later be retrieved after a crash and restart.
@@ -200,7 +184,6 @@ type RequestVoteReply struct {
 // example RequestVote RPC handler.
 //
 func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
-<<<<<<< HEAD
 
 	DPrintf("candidate %v's term = %v, my(%v) term = %v\n", args.CandidateId, args.Term, rf.me, rf.currentTerm)
 	rf.Lock("lock in RV")
@@ -258,43 +241,10 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 	} else if args.Term > rf.currentTerm {
 		rf.currentTerm = args.Term
 		rf.changeRole(FOLLOWER)
-=======
-	// Your code here (2A, 2B).
-	rf.Lock("lock in RE")
-	defer rf.Unlock("lock in RE")
-	lastTerm, lastIndex := rf.lastLogTermIndex()
-	DPrintf("candidate %v's term = %v, my(%v) term = %v\n", args.CandidateId, args.Term, rf.me, rf.currentTerm)
-	DPrintf("args.LastLogterm = %v, args.LastLogIndex = %v, lastTerm = %v, lastIndex = %v\n", args.LastLogterm, args.LastLogIndex, lastTerm, lastIndex)
-	reply.VoteGranted = false
-	reply.Term = rf.currentTerm
-	if args.Term < rf.currentTerm {
-		//	DPrintf("candidate %v's term is smaller than %v, reject \n", args.CandidateId, rf.me)
-		return
-	} else if args.Term == rf.currentTerm {
-		if rf.state == LEADER {
-			return
-		}
-		if rf.voteFor == args.CandidateId {
-			DPrintf("my(%v) votefor == -1 or has voted for %v, accept\n",rf.me, args.CandidateId)
-			reply.VoteGranted = true
-			return
-		}
-		if rf.voteFor == -1 && rf.voteFor != args.CandidateId {
-			return
-		}
-	}
-
-	defer rf.persist()
-	// if args.term larger than mine, change to follower, but none of grantVote's bussiness
-	if args.Term > rf.currentTerm {
-		rf.currentTerm = args.Term
-		rf.state = FOLLOWER
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 	//	rf.persist()
 		rf.voteFor = -1     // todo: not for sure if it is necessary
 	}
 
-<<<<<<< HEAD
 
 	if rf.state == LEADER {
 		return
@@ -313,35 +263,6 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 	}  else {
 		DPrintf("server %v reject %v RV\n", rf.me, args.CandidateId)
 	}
-=======
-	if lastTerm > args.LastLogterm || (lastTerm == args.LastLogterm && lastIndex > args.LastLogIndex) {
-		DPrintf("candidate %v log is older, server %v reject it\n", args.CandidateId, rf.me)
-		return
-	}
-
-	rf.currentTerm = args.Term
-	rf.state = FOLLOWER
-	reply.VoteGranted = true
-	rf.voteFor = args.CandidateId
-	rf.resetElectionTimer()
-	DPrintf("server %v grantVote for candidate %v\n", rf.me, args.CandidateId)
-	//else if lastTerm < args.LastLogterm || (lastTerm == args.LastLogterm && lastIndex <= args.LastLogIndex) {
-	//	DPrintf("candidate %v log is newer, accept\n", args.CandidateId)
-	//	reply.VoteGranted = true
-	//	rf.state = FOLLOWER
-	//	rf.voteFor = args.CandidateId
-	//	rf.currentTerm = args.Term
-	//	rf.persist()
-	//	rf.resetElectionTimer()
-	//}
-
- 	//if args.Term > rf.currentTerm {
-	//	rf.currentTerm = args.Term
-	//	rf.state = FOLLOWER
-	//	rf.persist()
-	//	rf.voteFor = -1     // todo: not for sure if it is necessary
-	//}
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 }
 
 //
@@ -399,11 +320,8 @@ func (rf *Raft) SendRequest(args *RequestVoteArgs) int{
 	RPCTimer := time.NewTimer(RPCTimeout)
 	defer RPCTimer.Stop()
 	resCh := make(chan bool)
-<<<<<<< HEAD
 	another := false
 
-=======
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 	go func () {
 		for i, _ := range rf.peers {
 			//	sig <- 0
@@ -417,7 +335,6 @@ func (rf *Raft) SendRequest(args *RequestVoteArgs) int{
 						if reply.Term > rf.currentTerm {
 							DPrintf("candidater %v send request to a leader %v, terminated\n", rf.me, i)
 							rf.currentTerm = reply.Term
-<<<<<<< HEAD
 							rf.changeRole(FOLLOWER)
 							another = true
 						}
@@ -427,17 +344,6 @@ func (rf *Raft) SendRequest(args *RequestVoteArgs) int{
 					}
 				} else {
 					DPrintf("candidate = %v fail to receive RequestVote from %v \n", rf.me, i)
-=======
-							rf.state = FOLLOWER
-							rf.resetElectionTimer()
-							rf.persist()
-						}
-					} else if reply.VoteGranted == true {
-						res += 1
-					}
-				} else {
-					DPrintf("candidate = %v fail to receive sendRequestVote from %v \n", rf.me, i)
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 				}
 				wg.Done()
 			}(i)
@@ -452,13 +358,10 @@ func (rf *Raft) SendRequest(args *RequestVoteArgs) int{
 	case <- resCh:
 		DPrintf("Receive all server in SendRequest")
 	}
-<<<<<<< HEAD
 	if another {
 		rf.resetElectionTimer()
 		rf.persist()
 	}
-=======
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 	return res
 }
 
@@ -498,41 +401,12 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 		rf.nextIndex[rf.me] = len(rf.log)
 		rf.matchIndex[rf.me] = lastIndex + 1
 		rf.persist()
-<<<<<<< HEAD
 		rf.AENow()
-=======
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 	}
 	return index, term, isLeader
 }
 
 
-<<<<<<< HEAD
-=======
-func (rf *Raft) SendHeartBeat() {
-
-	rf.mu.Lock()
-	args := AppendEntriesArgs{
-		Term:         rf.currentTerm,
-		LeaderId:       rf.me,
-		PrevLogIndex: 0,
-		PrevLogTerm:  0,
-		Entries:      nil,
-		LeaderCommit: 0,
-	}
-	rf.mu.Unlock()
-	reply := AppendEntriesReply{}
-	for i, _ := range rf.peers {
-		if i != rf.me {
-			go func(i int) {
-				rf.sendAppendEntries(i, &args, &reply)
-			}(i)
-		}
-	}
-}
-
-
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 
 //
 // the tester doesn't halt goroutines created by Raft after each test,
@@ -581,15 +455,9 @@ func (rf *Raft) changeRole(state int) {
 
 func (rf * Raft) Election() {
 	rf.Lock("lock1 in election")  // lock1
-<<<<<<< HEAD
 	rf.resetElectionTimer()
 	if rf.state == LEADER {
 		rf.Unlock("lock1 in election")  // lock1
-=======
-	defer rf.resetElectionTimer()
-	if rf.state == LEADER {
-//		rf.mu.Unlock()  // lock1
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 		return
 	}
 
@@ -639,11 +507,7 @@ func (rf *Raft) Periodic() {
 				case <- rf.appendEntriesTimer[index].C:
 				//	DPrintf("AE timeout, server % v is appending AE for %v\n", rf.me, index)
 					rf.appendEntriesToPeer(index)
-<<<<<<< HEAD
 				//	rf.resetAETimer(index)
-=======
-					rf.resetAETimer(index)
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 				//	DPrintf("server % v finishe append AE for %v\n", rf.me, index)
 				case <- rf.stopCh:
 					return
@@ -679,58 +543,47 @@ func (rf *Raft) Periodic() {
 }
 
 func (rf *Raft) Apply() {
-
-<<<<<<< HEAD
+	defer rf.applyTimer.Reset(ApplyInterval)
 	// rf.commitIndex is share variable, might be changed in AEtoPeer
 	// should be locked and acquire
+	DPrintf("server %v trying to acquire apply lock, seq = %v\n", rf.me, rf.LockSeq)
+
 	rf.Lock("Lock in apply")
 	commitIndex := rf.commitIndex
-	rf.Unlock("Lock in apply")
+	DPrintf("server %v acquire apply lock finish\n", rf.me)
 
-	defer rf.applyTimer.Reset(ApplyInterval)
-
+	msgs := make([]ApplyMsg, 0, rf.commitIndex-rf.lastApplied)
 	tag := false
 	DPrintf("server %v starts to apply, lastApplied = %v, commitIndex = %v \n", rf.me, rf.lastApplied, commitIndex)
 	for i := rf.lastApplied + 1; i <= commitIndex; i ++ {
-=======
-	rf.Lock("Lock in apply")
-	defer rf.Unlock("Lock in apply")
-	defer rf.applyTimer.Reset(ApplyInterval)
-
-	tag := false
-	DPrintf("sever %v starts to apply, lastApplied = %v, commitIndex = %v \n", rf.me, rf.lastApplied, rf.commitIndex)
-	for i := rf.lastApplied + 1; i <= rf.commitIndex; i ++ {
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 		tag = true
 		msg := ApplyMsg{
 			CommandValid: true,
 			Command:      rf.log[i].Command,
 			CommandIndex: i,
 		}
-<<<<<<< HEAD
-		DPrintf("server %v is applying msg : %v \n", rf.me, msg)
-		rf.applyCh <- msg
-		DPrintf("server %v has applied msg : %v \n", rf.me, msg)
-=======
-		rf.applyCh <- msg
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
+	//	rf.applyCh <- msg
+		msgs = append(msgs, msg)
 	}
+	rf.Unlock("Lock in apply")
+
 	if !tag {
 		DPrintf("server %v apply nothing \n", rf.me)
 	}
-<<<<<<< HEAD
 
-	if commitIndex > rf.lastApplied {
-		rf.lastApplied = commitIndex
-		DPrintf("server %v lastApplied = %v, commitIndex = %v, log = %v \n", rf.me, rf.lastApplied, commitIndex, rf.log)
-	}
-=======
-	if rf.commitIndex > rf.lastApplied {
-		DPrintf("server %v lastApplied = %v, commitIndex = %v, log = %v \n", rf.me, rf.lastApplied, rf.commitIndex, rf.log)
-		rf.lastApplied = rf.commitIndex
+	for _,msg := range msgs {
+		DPrintf("server %v is applying msg : %v \n", rf.me, msg)
+		rf.applyCh <- msg
+		rf.Lock("applyLogs2")
+		rf.lastApplied = msg.CommandIndex
+		rf.Unlock("applyLogs2")
+		DPrintf("server %v has applied msg : %v \n", rf.me, msg)
 	}
 
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
+	//if commitIndex > rf.lastApplied {
+	//	rf.lastApplied = commitIndex
+	//	DPrintf("server %v lastApplied = %v, commitIndex = %v, log = %v \n", rf.me, rf.lastApplied, commitIndex, rf.log)
+	//}
 }
 
 func (rf *Raft) containsXTerm(XTerm int, rightBound int) bool {
@@ -742,7 +595,6 @@ func (rf *Raft) containsXTerm(XTerm int, rightBound int) bool {
 	return false
 }
 
-<<<<<<< HEAD
 func (rf *Raft) CheckIfAEOutOfOrder(args *AppendEntriesArgs) bool {
 	argsLastIndex := args.PrevLogIndex + len(args.Entries)
 	myLastTerm, myLastIndex :=rf.lastLogTermIndex()
@@ -755,8 +607,6 @@ func (rf *Raft) CheckIfAEOutOfOrder(args *AppendEntriesArgs) bool {
 	return false
 }
 
-=======
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 
 //
 // the service or tester wants to create a Raft server. the ports
@@ -793,11 +643,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
 		applyTimer: time.NewTimer(ApplyInterval),
 		stopCh: make(chan struct{}),
 		applyCh: applyCh,
-<<<<<<< HEAD
 		LockSeq: make([]string, 0),
-=======
-		lockSeq: make([]string, 0),
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 	}
 	log := Log{
 		Command: "",

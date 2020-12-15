@@ -440,11 +440,8 @@ func (cfg *config) wait(index int, n int, startTerm int) interface{} {
 func (cfg *config) one(cmd interface{}, expectedServers int, retry bool) int {
 	t0 := time.Now()
 	starts := 0
-<<<<<<< HEAD
 	var nd int
 	var cmd1 interface{}
-=======
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 	for time.Since(t0).Seconds() < 10 {
 		// try all the servers, maybe one is the leader.
 		index := -1
@@ -470,11 +467,7 @@ func (cfg *config) one(cmd interface{}, expectedServers int, retry bool) int {
 			// submitted our command; wait a while for agreement.
 			t1 := time.Now()
 			for time.Since(t1).Seconds() < 2 {
-<<<<<<< HEAD
 				nd, cmd1 = cfg.nCommitted(index)
-=======
-				nd, cmd1 := cfg.nCommitted(index)
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 			//	DPrintf("in one, nd = %v, cmd1 = %v \n", nd, cmd1)
 				if nd > 0 && nd >= expectedServers {
 					// committed
@@ -486,27 +479,18 @@ func (cfg *config) one(cmd interface{}, expectedServers int, retry bool) int {
 				time.Sleep(20 * time.Millisecond)
 			}
 			if retry == false {
-<<<<<<< HEAD
 				nd, cmd1 := cfg.nCommitted(index)
 				cfg.t.Fatalf("one(%v), expect %v server commit, but %v server commit\n", cmd1, expectedServers, nd)
 				cfg.t.Fatalf("one(%v) failed to reach agreement\n", cmd)
-=======
-				cfg.t.Fatalf("one(%v) failed to reach agreement", cmd)
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 			}
 		} else {
 			time.Sleep(50 * time.Millisecond)
 		}
 	}
-<<<<<<< HEAD
 	DPrintf("!! no leader in one func, or : \n")
 	// nd, cmd1 := cfg.nCommitted(index)
 	DPrintf("one(%v), expect %v server commit, but %v server commit\n", cmd1, expectedServers, nd)
 	cfg.t.Fatalf("one(%v) failed to reach agreement\n", cmd)
-=======
-	DPrintf("!! no leader in one func!!\n")
-	cfg.t.Fatalf("one(%v) failed to reach agreement", cmd)
->>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 	return -1
 }
 
