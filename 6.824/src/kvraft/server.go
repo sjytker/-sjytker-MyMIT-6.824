@@ -158,7 +158,7 @@ func (kv *KVServer) WaitApplyCh() {
 			} else if op.Method == "Get"{
 				DPrintf("kvserver %v applying method = Get, do nothing but notify\n", kv.me)
 			}
-			
+
 			if ch, ok := kv.notifyData[op.RequestId]; ok {
 				ch <- NotifyMsg{
 					Err:   OK,

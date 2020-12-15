@@ -562,6 +562,7 @@ func (rf *Raft) Apply() {
 			Command:      rf.log[i].Command,
 			CommandIndex: i,
 		}
+	//	rf.applyCh <- msg
 		msgs = append(msgs, msg)
 	}
 	rf.Unlock("Lock in apply")
