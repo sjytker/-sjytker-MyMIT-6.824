@@ -589,7 +589,10 @@ func TestPersist12C(t *testing.T) {
 
 	cfg.begin("Test (2C): basic persistence")
 
+<<<<<<< HEAD
 	DPrintf("putting cmd = 11, and wait for 3 servers to commit\n")
+=======
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 	cfg.one(11, servers, true)
 
 	// crash and re-start all
@@ -601,7 +604,10 @@ func TestPersist12C(t *testing.T) {
 		cfg.connect(i)
 	}
 
+<<<<<<< HEAD
 	DPrintf("putting cmd = 12, and wait for 3 servers to commit\n")
+=======
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 	cfg.one(12, servers, true)
 
 	leader1 := cfg.checkOneLeader()
@@ -859,7 +865,11 @@ func TestFigure8Unreliable2C(t *testing.T) {
 		}
 	}
 
+<<<<<<< HEAD
 	log.Printf("TestFigure8Unreliable2C, finished random putting cmd, always keeping 3 server alive, now rejoin\n")
+=======
+	log.Printf("TestFigure8Unreliable2C, finished random putting cmd, always keeping 3 server alive\n")
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 	log.Printf("TestFigure8Unreliable2C, cfg.one, expect 5\n")
 	cfg.one(rand.Int()%10000, servers, true)
 

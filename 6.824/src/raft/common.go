@@ -9,7 +9,11 @@ import (
 const (
 	electionTimeOut = 300 * time.Millisecond
 	beatPeriod = 100 * time.Millisecond
+<<<<<<< HEAD
 	RPCTimeout = 150 * time.Millisecond
+=======
+	RPCTimeout = 100 * time.Millisecond
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 	ApplyInterval = 100 * time.Millisecond
 )
 
@@ -77,6 +81,7 @@ func (rf *Raft) resetElectionTimer() {
 
 
 func (rf *Raft) Lock(m string) {
+<<<<<<< HEAD
 
 
 //	DPrintf("server %v requesting lock %v \n", rf.me, m)
@@ -88,11 +93,23 @@ func (rf *Raft) Lock(m string) {
 
 //	DPrintf("server %v got lock ---> %v \n", rf.me, m)
 	//DPrintf("server %v Lock seq : %v \n", rf.me, rf.lockSeq)
+=======
+	// dt := time.NewTimer(500 * time.Millisecond)
+	rf.mu.Lock()
+	//rf.lockSeq = append(rf.lockSeq, m)
+	//if len(rf.lockSeq) > 1 {
+	//	log.Fatal("deadLock!  current lockSeq : ", rf.lockSeq, len(rf.lockSeq))
+	//}
+
+//	DPrintf("server %v requesting %v \n", rf.me, m)
+//	DPrintf("server %v Lock seq : %v \n", rf.me, rf.lockSeq)
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 }
 
 
 func (rf *Raft) Unlock(m string) {
 
+<<<<<<< HEAD
 	//if m == rf.LockSeq[0] {
 	//	if len(rf.LockSeq) == 1 {
 	//		rf.LockSeq = make([]string, 0)
@@ -107,4 +124,9 @@ func (rf *Raft) Unlock(m string) {
 
 //	rf.LockSeq = rf.lockSeq[:len(rf.LockSeq) - 1]
 //	DPrintf("server %v releasing %v \n", rf.me, m)
+=======
+	rf.mu.Unlock()
+//	rf.lockSeq = rf.lockSeq[:len(rf.lockSeq) - 1]
+	//DPrintf("server %v releasing %v \n", rf.me, m)
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 }

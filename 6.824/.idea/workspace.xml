@@ -23,9 +23,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="428b95ac-c9d1-4caa-b44b-264550ee0976" name="Default Changelist" comment="">
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/kvraft/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/kvraft/server.go" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/raft/Aout" beforeDir="false" afterPath="$PROJECT_DIR$/src/raft/Aout" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/raft/Bout" beforeDir="false" afterPath="$PROJECT_DIR$/src/raft/Bout" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/raft/append_entries.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/raft/append_entries.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/raft/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/raft/common.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/raft/raft.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/raft/raft.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/raft/test_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/raft/test_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/raft/tester" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/raft/util.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/raft/util.go" afterDir="false" />
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
       <change beforePath="$PROJECT_DIR$/遇到的问题.md" beforeDir="false" afterPath="$PROJECT_DIR$/遇到的问题.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -78,7 +90,10 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+<<<<<<< HEAD
       <recent name="D:\distributed_system\6.824\src\main" />
+=======
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
       <recent name="D:\distributed_system\6.824\src\mr" />
     </key>
   </component>
@@ -173,10 +188,16 @@
       <screen x="3000" y="0" width="2560" height="1409" />
     </state>
     <state x="3093" y="93" width="2375" height="1224" key="DirDiffDialog/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1605880748004" />
+<<<<<<< HEAD
     <state x="531" y="240" key="FileChooserDialogImpl" timestamp="1607425559094">
       <screen x="0" y="0" width="1500" height="970" />
     </state>
     <state x="531" y="240" key="FileChooserDialogImpl/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1607425559094" />
+=======
+    <state x="3906" y="349" key="FileChooserDialogImpl" timestamp="1606732761727">
+      <screen x="3000" y="0" width="2560" height="1409" />
+    </state>
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
     <state x="3906" y="349" key="FileChooserDialogImpl/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1606732761727" />
     <state x="531" y="240" key="FileChooserDialogImpl/0.0.1500.970@0.0.1500.970" timestamp="1605837709482" />
     <state width="1458" height="229" key="GridCell.Tab.0.bottom" timestamp="1606730514526">
@@ -208,6 +229,7 @@
     </state>
     <state x="300" y="126" key="SettingsEditor/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1605612107938" />
     <state x="3223" y="460" key="SettingsEditor/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1606702531230" />
+<<<<<<< HEAD
     <state x="617" y="252" width="228" height="131" key="dock-window-1" timestamp="1607418102902">
       <screen x="0" y="0" width="1500" height="970" />
     </state>
@@ -222,6 +244,20 @@
     <state x="3390" y="246" width="566" height="804" key="find.popup/0.0.1500.970/3000.0.1920.1050@3000.0.1920.1050" timestamp="1606456495829" />
     <state x="3520" y="375" width="603" height="804" key="find.popup/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1607435292038" />
     <state x="305" y="258" width="564" height="554" key="find.popup/0.0.1500.970@0.0.1500.970" timestamp="1607502946987" />
+=======
+    <state x="353" y="161" width="2013" height="1134" key="dock-window-1" timestamp="1605888602503">
+      <screen x="0" y="0" width="2560" height="1409" />
+    </state>
+    <state x="3320" y="169" width="1150" height="956" maximized="true" key="dock-window-1/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1605767898917" />
+    <state x="0" y="0" width="1512" height="1055" key="dock-window-1/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1605879278776" />
+    <state x="353" y="161" width="2013" height="1134" key="dock-window-1/0.0.2560.1409@0.0.2560.1409" timestamp="1605888602503" />
+    <state x="574" y="209" width="564" height="554" key="find.popup" timestamp="1607072028171">
+      <screen x="0" y="0" width="1500" height="970" />
+    </state>
+    <state x="574" y="209" width="564" height="554" key="find.popup/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1607072028171" />
+    <state x="3390" y="246" width="566" height="804" key="find.popup/0.0.1500.970/3000.0.1920.1050@3000.0.1920.1050" timestamp="1606456495829" />
+    <state x="3520" y="375" width="603" height="804" key="find.popup/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1607013136771" />
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
     <state x="979" y="303" width="603" height="804" key="find.popup/0.0.2560.1409@0.0.2560.1409" timestamp="1606009190401" />
     <state x="3551" y="546" key="ftp.server.browser" timestamp="1605879900603">
       <screen x="3000" y="0" width="2560" height="1409" />
@@ -231,12 +267,21 @@
       <screen x="3000" y="0" width="2560" height="1409" />
     </state>
     <state x="3580" y="707" key="publish.login/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1605879668768" />
+<<<<<<< HEAD
     <state x="3707" y="304" width="1147" height="985" key="search.everywhere.popup" timestamp="1607242342954">
       <screen x="3000" y="0" width="2560" height="1409" />
     </state>
     <state x="417" y="212" width="672" height="678" key="search.everywhere.popup/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1606905015836" />
     <state x="3530" y="227" width="861" height="735" key="search.everywhere.popup/0.0.1500.970/3000.0.1920.1050@3000.0.1920.1050" timestamp="1606460551859" />
     <state x="3707" y="304" width="1147" height="985" key="search.everywhere.popup/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1607242342954" />
+=======
+    <state x="417" y="212" width="672" height="678" key="search.everywhere.popup" timestamp="1606905015836">
+      <screen x="0" y="0" width="1500" height="970" />
+    </state>
+    <state x="417" y="212" width="672" height="678" key="search.everywhere.popup/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1606905015836" />
+    <state x="3530" y="227" width="861" height="735" key="search.everywhere.popup/0.0.1500.970/3000.0.1920.1050@3000.0.1920.1050" timestamp="1606460551859" />
+    <state x="3707" y="304" width="1147" height="985" key="search.everywhere.popup/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1606444307742" />
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
     <state x="709" y="305" width="1147" height="985" key="search.everywhere.popup/0.0.2560.1409@0.0.2560.1409" timestamp="1606015021943" />
   </component>
 </project>

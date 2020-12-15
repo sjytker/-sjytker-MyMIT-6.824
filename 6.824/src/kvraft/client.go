@@ -1,11 +1,15 @@
 package kvraft
 
+<<<<<<< HEAD
 import (
 	"../labrpc"
 	"sync"
 	"sync/atomic"
 	"time"
 )
+=======
+import "../labrpc"
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 import "crypto/rand"
 import "math/big"
 
@@ -13,6 +17,7 @@ import "math/big"
 type Clerk struct {
 	servers []*labrpc.ClientEnd
 	// You will have to modify this struct.
+<<<<<<< HEAD
 	dead   int32
 	leaderId int
 	clientId int64
@@ -21,6 +26,8 @@ type Clerk struct {
 
 	findLeaderTimer *time.Timer
 	Term            int
+=======
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 }
 
 func nrand() int64 {
@@ -31,6 +38,7 @@ func nrand() int64 {
 }
 
 func MakeClerk(servers []*labrpc.ClientEnd) *Clerk {
+<<<<<<< HEAD
 	ck := Clerk{
 		servers:         servers,
 		dead:            0,
@@ -62,6 +70,14 @@ func (kv *Clerk) killed() bool {
 	z := atomic.LoadInt32(&kv.dead)
 	return z == 1
 }
+=======
+	ck := new(Clerk)
+	ck.servers = servers
+	// You'll have to add code here.
+	return ck
+}
+
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 //
 // fetch the current value for a key.
 // returns "" if the key does not exist.
@@ -76,6 +92,7 @@ func (kv *Clerk) killed() bool {
 //
 func (ck *Clerk) Get(key string) string {
 
+<<<<<<< HEAD
 	DPrintf("client %v receive a get command\n", ck.clientId)
 
 	args := GetArgs{
@@ -108,6 +125,9 @@ func (ck *Clerk) Get(key string) string {
 		}
 	}
 
+=======
+	// You will have to modify this function.
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 	return ""
 }
 
@@ -123,6 +143,7 @@ func (ck *Clerk) Get(key string) string {
 //
 func (ck *Clerk) PutAppend(key string, value string, op string) {
 	// You will have to modify this function.
+<<<<<<< HEAD
 
 	if op == "Put" {
 		DPrintf("client %v receive a Put command\n", ck.clientId)
@@ -167,6 +188,8 @@ func (ck *Clerk) PutAppend(key string, value string, op string) {
 			DPrintf("client %v rpc fail\n", ck.clientId)
 		}
 	}
+=======
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 }
 
 func (ck *Clerk) Put(key string, value string) {
@@ -175,6 +198,7 @@ func (ck *Clerk) Put(key string, value string) {
 func (ck *Clerk) Append(key string, value string) {
 	ck.PutAppend(key, value, "Append")
 }
+<<<<<<< HEAD
 
 func (ck *Clerk) periodic() {
 
@@ -234,3 +258,5 @@ func (ck *Clerk) findLeaderNow() {
 	ck.findLeaderTimer.Stop()
 	ck.findLeaderTimer.Reset(0)
 }
+=======
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2

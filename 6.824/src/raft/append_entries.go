@@ -25,13 +25,18 @@ type AppendEntriesReply struct {
 
 // if rf is a leader, append entries to peer "index"
 func (rf *Raft) appendEntriesToPeer(index int) {
+<<<<<<< HEAD
 	RPCTimer := time.NewTimer(RPCTimeout)
 	defer RPCTimer.Stop()
 	// rf.resetElectionTimer()
+=======
+
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 	for !rf.killed() {
 
 		rf.Lock("lock1 in AEtoPeer")
 		if (rf.state != LEADER) {
+<<<<<<< HEAD
 			rf.resetAETimer(index)
 			rf.Unlock("lock1 in AEtoPeer")   // lock1
 			return
@@ -39,6 +44,13 @@ func (rf *Raft) appendEntriesToPeer(index int) {
 
 		rf.resetAETimer(index)
 
+=======
+			rf.Unlock("lock1 in AEtoPeer")   // lock1
+			return
+		}
+	//	n := len(rf.peers)
+		rf.resetElectionTimer()
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 		prevLogTerm, prevLogIndex := rf.PrevLogTermIndex(index)
 		DPrintf("leader %v log len: %v, log : %v, lastApplied : %v, commitIndex : %v\n", rf.me, len(rf.log), rf.log, rf.lastApplied, rf.commitIndex)
 		DPrintf("leader %v currentTerm : %v \n", rf.me, rf.currentTerm)
@@ -60,9 +72,16 @@ func (rf *Raft) appendEntriesToPeer(index int) {
 			NextIndex: 0,
 		}
 		resCh := make(chan bool)
+<<<<<<< HEAD
 		rf.Unlock("lock1 in AEtoPeer")
 		RPCTimer.Stop()
 		RPCTimer.Reset(RPCTimeout)
+=======
+		RPCTimer := time.NewTimer(RPCTimeout)
+		defer RPCTimer.Stop()
+
+		rf.Unlock("lock1 in AEtoPeer")
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 		go func(args *AppendEntriesArgs, reply *AppendEntriesReply) {
 			ok := rf.sendAppendEntries(index, args, reply)
 			resCh <- ok
@@ -77,14 +96,21 @@ func (rf *Raft) appendEntriesToPeer(index int) {
 		case <- rf.stopCh:
 			return
 		case <- RPCTimer.C:
+<<<<<<< HEAD
 			// stop AE immediately if RPC timeout
 			DPrintf("AE timeout, current leader = %v, sending to %v \n", rf.me, index)
+=======
+			DPrintf("AE timeout, current leader = %v, sending to %v \n", rf.me, index)
+			RPCTimer.Stop()
+			RPCTimer.Reset(RPCTimeout)
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 			continue
 		}
 
 		rf.Lock("lock2 in AEtoPeer")
 		// if AE to another leader, and its term is larger than mine
 		if reply.Term > rf.currentTerm {
+<<<<<<< HEAD
 			rf.changeRole(FOLLOWER)
 			rf.resetElectionTimer()
 			rf.currentTerm = reply.Term
@@ -94,6 +120,9 @@ func (rf *Raft) appendEntriesToPeer(index int) {
 		}
 
 		if rf.state != LEADER || rf.currentTerm != args.Term {
+=======
+			rf.state = FOLLOWER
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 			rf.Unlock("lock2 in AEtoPeer")  // lock2
 			return
 		}
@@ -114,6 +143,7 @@ func (rf *Raft) appendEntriesToPeer(index int) {
 		}
 
 		// AE fail due to log inconsistency
+<<<<<<< HEAD
 		// or network delay, term has passed
 		// due with it according to paper's figure 2
 		// optimize the roll back algorithm, instead of -1 per time
@@ -123,13 +153,24 @@ func (rf *Raft) appendEntriesToPeer(index int) {
 			//	rf.changeRole(FOLLOWER)
 				return
 			}
+=======
+		// due with it according to paper's figure 2
+		// optimize the roll back algorithm, instead of -1 per time
+		if reply.Success == false {
+
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 			XTerm, XIndex, XLen := reply.Term, reply.XIndex, reply.XLen
 			DPrintf("In AEtoPeer: XIndex = %v, XTerm = %v, XLen = %v \n", reply.XIndex, reply.XTerm, reply.XLen)
 			//NextIndex := XLen
 			var NextIndex int
 			if XLen <= args.PrevLogIndex {
 				NextIndex = XLen
+<<<<<<< HEAD
 			} else if !rf.containsXTerm(XTerm, rf.nextIndex[index]) {
+=======
+			}
+			if !rf.containsXTerm(XTerm, rf.nextIndex[index]) {
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 			//	NextIndex = min(NextIndex, XIndex)
 				NextIndex = XIndex
 			} else {
@@ -167,6 +208,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 		return
 	}
 
+<<<<<<< HEAD
 	//if args.Term > rf.currentTerm {
 	//	rf.currentTerm = args.Term
 	//	rf.changeRole(FOLLOWER)
@@ -175,6 +217,8 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 	//	return
 	//}
 
+=======
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 	rf.resetElectionTimer()
 	rf.currentTerm = args.Term
 	rf.changeRole(FOLLOWER)
@@ -212,6 +256,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 		DPrintf("entry.term = %v, prevLogTerm = %v, prevLogIndex = %v\n", entry.Term, args.PrevLogTerm, args.PrevLogIndex)
 		DPrintf("XIndex = %v, XTerm = %v, XLen = %v \n", reply.XIndex, reply.XTerm, reply.XLen)
 	} else {
+<<<<<<< HEAD
 		DPrintf("AE match success, leader: %v, follower:%v\n", args.LeaderId, rf.me)
 		if rf.CheckIfAEOutOfOrder(args) {
 			// AE packge delayed in network, it is order
@@ -227,6 +272,16 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 				_, lastIndex := rf.lastLogTermIndex()
 				rf.commitIndex = min(args.LeaderCommit, lastIndex)
 			}
+=======
+		DPrintf("AE match success, leader: %v, follower:%v \n", args.LeaderId, rf.me)
+		reply.Success = true
+		rf.log = rf.log[:args.PrevLogIndex + 1]   // trim right
+		rf.log = append(rf.log, args.Entries...)
+		rf.persist()
+		if args.LeaderCommit > rf.commitIndex {
+			_, lastIndex := rf.lastLogTermIndex()
+			rf.commitIndex = min(args.LeaderCommit, lastIndex)
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 		}
 	}
 	// follower commit

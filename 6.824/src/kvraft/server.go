@@ -7,10 +7,16 @@ import (
 	"../raft"
 	"sync"
 	"sync/atomic"
+<<<<<<< HEAD
 	"time"
 )
 
 const Debug = 1
+=======
+)
+
+const Debug = 0
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 
 func DPrintf(format string, a ...interface{}) (n int, err error) {
 	if Debug > 0 {
@@ -20,7 +26,15 @@ func DPrintf(format string, a ...interface{}) (n int, err error) {
 }
 
 
+<<<<<<< HEAD
 
+=======
+type Op struct {
+	// Your definitions here.
+	// Field names must start with capital letters,
+	// otherwise RPC will break.
+}
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 
 type KVServer struct {
 	mu      sync.Mutex
@@ -28,11 +42,14 @@ type KVServer struct {
 	rf      *raft.Raft
 	applyCh chan raft.ApplyMsg
 	dead    int32 // set by Kill()
+<<<<<<< HEAD
 	stopCh chan struct{}
 	data map[string]string
 	vis map[int64]map[int64]bool
 
 	findLeaderTimer *time.Timer
+=======
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 
 	maxraftstate int // snapshot if log grows this big
 
@@ -41,6 +58,7 @@ type KVServer struct {
 
 
 func (kv *KVServer) Get(args *GetArgs, reply *GetReply) {
+<<<<<<< HEAD
 	kv.mu.Lock()
 	defer kv.mu.Unlock()
 
@@ -201,6 +219,15 @@ func (kv *KVServer) WaitApplyCh() {
 
 
 
+=======
+	// Your code here.
+}
+
+func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
+	// Your code here.
+}
+
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 //
 // the tester calls Kill() when a KVServer instance won't
 // be needed again. for your convenience, we supply
@@ -214,7 +241,10 @@ func (kv *KVServer) WaitApplyCh() {
 func (kv *KVServer) Kill() {
 	atomic.StoreInt32(&kv.dead, 1)
 	kv.rf.Kill()
+<<<<<<< HEAD
 	close(kv.stopCh)
+=======
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 	// Your code here, if desired.
 }
 
@@ -223,6 +253,7 @@ func (kv *KVServer) killed() bool {
 	return z == 1
 }
 
+<<<<<<< HEAD
 
 
 //GetState from rpc
@@ -240,6 +271,8 @@ func (kv *KVServer) GetState(args *GetStateArgs, reply *GetStateReply)  {
 func (kv *KVServer) Periodic() {
 	go kv.WaitApplyCh()
 }
+=======
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 //
 // servers[] contains the ports of the set of
 // servers that will cooperate via Raft to
@@ -259,6 +292,7 @@ func StartKVServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persiste
 	// Go's RPC library to marshall/unmarshall.
 	labgob.Register(Op{})
 
+<<<<<<< HEAD
 	kv := KVServer{
 		mu:              sync.Mutex{},
 		me:              me,
@@ -276,4 +310,18 @@ func StartKVServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persiste
 	DPrintf("there are %v servers, me = %v\n", len(servers), me)
 	go kv.Periodic()
 	return &kv
+=======
+	kv := new(KVServer)
+	kv.me = me
+	kv.maxraftstate = maxraftstate
+
+	// You may need initialization code here.
+
+	kv.applyCh = make(chan raft.ApplyMsg)
+	kv.rf = raft.Make(servers, me, persister, kv.applyCh)
+
+	// You may need initialization code here.
+
+	return kv
+>>>>>>> edacab21560e1960d239d963a1287729ab342ea2
 }
