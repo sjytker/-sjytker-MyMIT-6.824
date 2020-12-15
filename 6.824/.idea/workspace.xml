@@ -9,24 +9,14 @@
         <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
         <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
       </path>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
     </expand>
     <select />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="428b95ac-c9d1-4caa-b44b-264550ee0976" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/kvraft/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/kvraft/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/遇到的问题.md" beforeDir="false" afterPath="$PROJECT_DIR$/遇到的问题.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/raft/raft.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/raft/raft.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,7 +57,7 @@
     <property name="configurable.Project.GOPATH.is.expanded" value="true" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../6.824-golabs-2020-yzy" />
+    <property name="last_opened_file_path" value="$USER_HOME$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -78,6 +68,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\distributed_system\6.824\src" />
       <recent name="D:\distributed_system\6.824\src\main" />
       <recent name="D:\distributed_system\6.824\src\mr" />
     </key>
@@ -165,10 +156,11 @@
       <screen x="3000" y="0" width="2560" height="1409" />
     </state>
     <state x="3949" y="452" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1606035691717" />
-    <state x="502" y="293" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1606982122727">
-      <screen x="0" y="0" width="1500" height="970" />
+    <state x="3857" y="426" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1607945838619">
+      <screen x="3000" y="0" width="2560" height="1409" />
     </state>
     <state x="502" y="293" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1606982122727" />
+    <state x="3857" y="426" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1607945838619" />
     <state x="3093" y="93" width="2375" height="1224" key="DirDiffDialog" timestamp="1605880748004">
       <screen x="3000" y="0" width="2560" height="1409" />
     </state>
@@ -215,12 +207,12 @@
     <state x="324" y="0" width="1171" height="975" key="dock-window-1/0.0.1500.970/3000.0.2560.1409@0.0.1500.970" timestamp="1607393647186" />
     <state x="324" y="0" width="1171" height="975" maximized="true" key="dock-window-1/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1607397747912" />
     <state x="353" y="161" width="2013" height="1134" key="dock-window-1/0.0.2560.1409@0.0.2560.1409" timestamp="1605888602503" />
-    <state x="574" y="209" width="564" height="554" key="find.popup" timestamp="1607593732736">
+    <state x="574" y="209" width="564" height="554" key="find.popup" timestamp="1608014035409">
       <screen x="0" y="0" width="1500" height="970" />
     </state>
-    <state x="574" y="209" width="564" height="554" key="find.popup/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1607593732736" />
+    <state x="574" y="209" width="564" height="554" key="find.popup/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1608014035409" />
     <state x="3390" y="246" width="566" height="804" key="find.popup/0.0.1500.970/3000.0.1920.1050@3000.0.1920.1050" timestamp="1606456495829" />
-    <state x="3520" y="375" width="603" height="804" key="find.popup/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1607435292038" />
+    <state x="3520" y="375" width="603" height="804" key="find.popup/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1607873775370" />
     <state x="305" y="258" width="564" height="554" key="find.popup/0.0.1500.970@0.0.1500.970" timestamp="1607502946987" />
     <state x="979" y="303" width="603" height="804" key="find.popup/0.0.2560.1409@0.0.2560.1409" timestamp="1606009190401" />
     <state x="3551" y="546" key="ftp.server.browser" timestamp="1605879900603">

@@ -137,6 +137,7 @@ func partitioner(t *testing.T, cfg *config, ch chan bool, done *int32) {
 				}
 			}
 		}
+		log.Printf("partition servers into: %v %v\n", pa[0], pa[1])
 		cfg.partition(pa[0], pa[1])
 		time.Sleep(electionTimeout + time.Duration(rand.Int63()%200)*time.Millisecond)
 	}
@@ -240,6 +241,7 @@ func GenericTest(t *testing.T, part string, nclients int, unreliable bool, crash
 		if partitions {
 			log.Printf("wait for partitioner\n")
 			<-ch_partitioner
+			DPrintf("ready to connect all\n")
 			// reconnect network and submit a request. A client may
 			// have submitted a request in a minority.  That request
 			// won't return until that server discovers a new term
@@ -263,6 +265,7 @@ func GenericTest(t *testing.T, part string, nclients int, unreliable bool, crash
 				cfg.StartServer(i)
 			}
 			cfg.ConnectAll()
+			log.Printf("servers restart all finish\n")
 		}
 
 		log.Printf("wait for clients\n")
@@ -276,6 +279,7 @@ func GenericTest(t *testing.T, part string, nclients int, unreliable bool, crash
 			key := strconv.Itoa(i)
 			// log.Printf("Check %v for client %d\n", j, i)
 			v := Get(cfg, ck, key)
+			DPrintf("-----get complete----\n ")
 			checkClntAppends(t, i, v, j)
 		}
 

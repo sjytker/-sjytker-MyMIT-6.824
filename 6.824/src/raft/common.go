@@ -11,6 +11,7 @@ const (
 	beatPeriod = 100 * time.Millisecond
 	RPCTimeout = 150 * time.Millisecond
 	ApplyInterval = 100 * time.Millisecond
+
 )
 
 
@@ -80,8 +81,9 @@ func (rf *Raft) Lock(m string) {
 
 
 //	DPrintf("server %v requesting lock %v \n", rf.me, m)
-	//rf.LockSeq = append(rf.LockSeq, m)
+
 	rf.mu.Lock()
+	rf.LockSeq = append(rf.LockSeq, m)
 	//if len(rf.LockSeq) > 1 {
 	//	log.Fatal("deadLock!  current LockSeq : ", rf.LockSeq, len(rf.LockSeq))
 	//}
@@ -93,16 +95,16 @@ func (rf *Raft) Lock(m string) {
 
 func (rf *Raft) Unlock(m string) {
 
-	//if m == rf.LockSeq[0] {
-	//	if len(rf.LockSeq) == 1 {
-	//		rf.LockSeq = make([]string, 0)
-	//	} else {
-	//		rf.LockSeq = rf.LockSeq[1:]
-	//	}
+	if m == rf.LockSeq[0] {
+		if len(rf.LockSeq) == 1 {
+			rf.LockSeq = make([]string, 0)
+		} else {
+			rf.LockSeq = rf.LockSeq[1:]
+		}
 	//	DPrintf("server %v releasing %v, LockSeq:%v \n", rf.me, m, rf.LockSeq)
-	//} else {
+	} else {
 	//	DPrintf("server %v unlock error? m = %v, lockseq = %v\n", rf.me, m, rf.LockSeq)
-	//}
+	}
 	rf.mu.Unlock()
 
 //	rf.LockSeq = rf.lockSeq[:len(rf.LockSeq) - 1]
