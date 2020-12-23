@@ -553,10 +553,20 @@ func (rf *Raft) Apply() {
 	defer rf.applyTimer.Reset(ApplyInterval)
 	// rf.commitIndex is share variable, might be changed in AEtoPeer
 	// should be locked and acquire
+<<<<<<< HEAD
 
 	var msgs []ApplyMsg
 	rf.Lock("Lock in apply")
 	DPrintf("server %v acquire apply lock finish\n", rf.me)
+=======
+	DPrintf("server %v trying to acquire apply lock, seq = %v\n", rf.me, rf.LockSeq)
+
+	rf.Lock("Lock in apply")
+	commitIndex := rf.commitIndex
+	DPrintf("server %v acquire apply lock finish\n", rf.me)
+
+	msgs := make([]ApplyMsg, 0, rf.commitIndex-rf.lastApplied)
+>>>>>>> 2694adff741d395474232a36415f966716f74bd9
 	tag := false
 	commitIndex := rf.commitIndex
 	if rf.lastApplied < rf.lastSnapshotIndex {
@@ -583,9 +593,17 @@ func (rf *Raft) Apply() {
 			//	rf.applyCh <- msg
 			msgs = append(msgs, msg)
 		}
+<<<<<<< HEAD
 	}
 
 	rf.Unlock("Lock in apply")
+=======
+	//	rf.applyCh <- msg
+		msgs = append(msgs, msg)
+	}
+	rf.Unlock("Lock in apply")
+
+>>>>>>> 2694adff741d395474232a36415f966716f74bd9
 	if !tag {
 		DPrintf("server %v apply nothing \n", rf.me)
 	}
@@ -595,9 +613,12 @@ func (rf *Raft) Apply() {
 		rf.applyCh <- msg
 		rf.Lock("applyLogs2")
 		rf.lastApplied = msg.CommandIndex
+<<<<<<< HEAD
 		if msg.Command == "installSnapshot" {
 			rf.commitIndex = rf.lastApplied
 		}
+=======
+>>>>>>> 2694adff741d395474232a36415f966716f74bd9
 		rf.Unlock("applyLogs2")
 		DPrintf("server %v has applied msg : %v \n", rf.me, msg)
 	}

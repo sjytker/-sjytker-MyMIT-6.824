@@ -2,22 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9fcda723-55aa-4cbf-a267-4d85aa1dc091" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/6.824/src/raft/snapshot.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/lab3/atomicity_open_5_0.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/kvraft/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/kvraft/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/kvraft/test_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/kvraft/test_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/main/playground.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/main/playground.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/raft/append_entries.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/raft/append_entries.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/raft/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/raft/common.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/raft/raft.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/raft/raft.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/raft/single" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/raft/tester" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/shardmaster/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/shardmaster/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/shardmaster/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/shardmaster/common.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/shardmaster/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/shardmaster/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/shardmaster/test_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/shardmaster/test_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/遇到的问题.md" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/遇到的问题.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
