@@ -39,14 +39,27 @@ func check(t *testing.T, groups []int, ck *Clerk) {
 	}
 	min := 257
 	max := 0
+	allKeys := make([]int, 0)
 	for g, _ := range c.Groups {
+		allKeys = append(allKeys, g)
 		if counts[g] > max {
 			max = counts[g]
 		}
 		if counts[g] < min {
 			min = counts[g]
+			//if min == 0 {
+			//	DPrintf("*********min == 0, g = %v, count[g] = %v\n", g, counts[g])
+			//}
 		}
 	}
+
+	DPrintf("all tester group : %v\n", allKeys)
+	DPrintf("tester find all group\n")
+	DPrintf("--------------- \n")
+	for k, v := range counts {
+		DPrintf("%v   %v\n", k, v)
+	}
+	DPrintf("--------------- \n")
 	if max > min+1 {
 		t.Fatalf("max %v too much larger than min %v", max, min)
 	}

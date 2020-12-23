@@ -642,6 +642,7 @@ func TestSnapshotRPC3B(t *testing.T) {
 	Put(cfg, ck, "a", "A")
 	check(cfg, t, ck, "a", "A")
 
+	DPrintf("TestSnapshotRPC3B, basc check finish\n")
 	// a bunch of puts into the majority partition.
 	cfg.partition([]int{0, 1}, []int{2})
 	{
@@ -653,6 +654,7 @@ func TestSnapshotRPC3B(t *testing.T) {
 		Put(cfg, ck1, "b", "B")
 	}
 
+	DPrintf("TestSnapshotRPC3B, p1 finish\n")
 	// check that the majority partition has thrown away
 	// most of its log entries.
 	sz := cfg.LogSize()
@@ -672,6 +674,8 @@ func TestSnapshotRPC3B(t *testing.T) {
 		check(cfg, t, ck1, "1", "1")
 		check(cfg, t, ck1, "49", "49")
 	}
+
+	DPrintf("TestSnapshotRPC3B, p2 finish\n")
 
 	// now everybody
 	cfg.partition([]int{0, 1, 2}, []int{})

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="9fcda723-55aa-4cbf-a267-4d85aa1dc091" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/6.824/src/raft/snapshot.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/6.824/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/6.824/lab3/atomicity_open_5_0.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/6.824/src/kvraft/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/kvraft/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/6.824/src/kvraft/test_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/kvraft/test_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/6.824/src/main/playground.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/main/playground.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/6.824/src/raft/append_entries.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/raft/append_entries.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/6.824/src/raft/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/raft/common.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/6.824/src/raft/raft.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/raft/raft.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/6.824/src/raft/single" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/6.824/src/raft/tester" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/6.824/src/shardmaster/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/shardmaster/client.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/6.824/src/shardmaster/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/shardmaster/common.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/6.824/src/shardmaster/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/shardmaster/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/6.824/src/shardmaster/test_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/shardmaster/test_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/6.824/遇到的问题.md" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/遇到的问题.md" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="GOROOT" path="D:\Go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1ljGx2qMnJjyuQr59sVc8KkK80I" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="go.import.settings.migrated" value="true" />
+    <property name="go.sdk.automatically.set" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+  </component>
+  <component name="RunManager">
+    <configuration name="go build playground.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="distributed_system" />
+      <working_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/6.824/src/main/playground.go" />
+      <directory value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Build.go build playground.go" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state width="1458" height="271" key="GridCell.Tab.0.bottom" timestamp="1608728151742">
+      <screen x="0" y="0" width="2560" height="1409" />
+    </state>
+    <state width="1458" height="271" key="GridCell.Tab.0.bottom/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1608687957778" />
+    <state width="1877" height="295" key="GridCell.Tab.0.bottom/0.0.1500.970/3000.0.1920.1050@3000.0.1920.1050" timestamp="1608516720565" />
+    <state width="1217" height="271" key="GridCell.Tab.0.bottom/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1608651816673" />
+    <state width="1458" height="271" key="GridCell.Tab.0.bottom/0.0.2560.1409@0.0.2560.1409" timestamp="1608728151742" />
+    <state width="1458" height="259" key="GridCell.Tab.0.bottom/3000.0.2560.1400/0.0.1500.970@3000.0.2560.1400" timestamp="1608300473141" />
+    <state width="1458" height="271" key="GridCell.Tab.0.center" timestamp="1608728151741">
+      <screen x="0" y="0" width="2560" height="1409" />
+    </state>
+    <state width="1458" height="271" key="GridCell.Tab.0.center/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1608687957777" />
+    <state width="1877" height="295" key="GridCell.Tab.0.center/0.0.1500.970/3000.0.1920.1050@3000.0.1920.1050" timestamp="1608516720565" />
+    <state width="1217" height="271" key="GridCell.Tab.0.center/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1608651816672" />
+    <state width="1458" height="271" key="GridCell.Tab.0.center/0.0.2560.1409@0.0.2560.1409" timestamp="1608728151741" />
+    <state width="1458" height="259" key="GridCell.Tab.0.center/3000.0.2560.1400/0.0.1500.970@3000.0.2560.1400" timestamp="1608300473141" />
+    <state width="1458" height="271" key="GridCell.Tab.0.left" timestamp="1608728151741">
+      <screen x="0" y="0" width="2560" height="1409" />
+    </state>
+    <state width="1458" height="271" key="GridCell.Tab.0.left/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1608687957777" />
+    <state width="1877" height="295" key="GridCell.Tab.0.left/0.0.1500.970/3000.0.1920.1050@3000.0.1920.1050" timestamp="1608516720564" />
+    <state width="1217" height="271" key="GridCell.Tab.0.left/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1608651816672" />
+    <state width="1458" height="271" key="GridCell.Tab.0.left/0.0.2560.1409@0.0.2560.1409" timestamp="1608728151741" />
+    <state width="1458" height="259" key="GridCell.Tab.0.left/3000.0.2560.1400/0.0.1500.970@3000.0.2560.1400" timestamp="1608300473141" />
+    <state width="1458" height="271" key="GridCell.Tab.0.right" timestamp="1608728151742">
+      <screen x="0" y="0" width="2560" height="1409" />
+    </state>
+    <state width="1458" height="271" key="GridCell.Tab.0.right/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1608687957778" />
+    <state width="1877" height="295" key="GridCell.Tab.0.right/0.0.1500.970/3000.0.1920.1050@3000.0.1920.1050" timestamp="1608516720565" />
+    <state width="1217" height="271" key="GridCell.Tab.0.right/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1608651816672" />
+    <state width="1458" height="271" key="GridCell.Tab.0.right/0.0.2560.1409@0.0.2560.1409" timestamp="1608728151742" />
+    <state width="1458" height="259" key="GridCell.Tab.0.right/3000.0.2560.1400/0.0.1500.970@3000.0.2560.1400" timestamp="1608300473141" />
+    <state x="454" y="234" width="590" height="500" key="find.popup" timestamp="1608723478417">
+      <screen x="0" y="0" width="1500" height="970" />
+    </state>
+    <state x="454" y="234" width="590" height="500" key="find.popup/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1608723478417" />
+    <state x="3557" y="385" width="1007" height="727" key="find.popup/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1608456400628" />
+    <state x="3775" y="338" width="1007" height="723" key="find.popup/3000.0.2560.1400/0.0.1500.970@3000.0.2560.1400" timestamp="1608299716655" />
+    <state x="414" y="209" width="672" height="678" key="search.everywhere.popup" timestamp="1608204295044">
+      <screen x="0" y="0" width="1500" height="970" />
+    </state>
+    <state x="414" y="209" width="672" height="678" key="search.everywhere.popup/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1608204295044" />
+  </component>
+</project>

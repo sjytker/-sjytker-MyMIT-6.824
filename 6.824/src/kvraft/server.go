@@ -3,8 +3,10 @@ package kvraft
 import (
 	"../labgob"
 	"../labrpc"
+	"bytes"
 	"log"
 	"../raft"
+	"os"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -20,8 +22,6 @@ func DPrintf(format string, a ...interface{}) (n int, err error) {
 }
 
 
-
-
 type KVServer struct {
 	mu      sync.Mutex
 	me      int
@@ -35,7 +35,10 @@ type KVServer struct {
 	maxraftstate int // snapshot if log grows this big
 	lastApplied map[int64]int64
 	notifyData map[int64]chan NotifyMsg
-	// Your definitions here.
+
+	persister      *raft.Persister
+	lastApplyIndex int
+	lastApplyTerm  int
 }
 
 
@@ -58,14 +61,10 @@ func (kv *KVServer) Get(args *GetArgs, reply *GetReply) {
 		RequestId:	nrand(),
 	}
 
-	// situation : this msg is late, another same one is applied
-//	repeat := kv.CheckApplied(args.MsgId, args.ClientId)
+	res := kv.waitForRaft(serverOp)
+	reply.Err = res.Err
+	reply.Value = res.Value
 
-	//if !repeat {
-		res := kv.waitForRaft(serverOp)
-		reply.Err = res.Err
-		reply.Value = res.Value
-//	}
 }
 
 func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
@@ -121,8 +120,8 @@ func (kv *KVServer) waitForRaft(op Op) (res NotifyMsg) {
 		res.Err = ErrTimeOut
 		kv.removeCh(op.RequestId)
 		return
-	//case <- kv.stopCh:
-	//	return
+	case <- kv.stopCh:
+		return
 	}
 }
 
@@ -135,10 +134,12 @@ func (kv *KVServer) WaitApplyCh() {
 		case msg := <- kv.applyCh:
 			if !msg.CommandValid {
 				//todo
-				log.Fatal("________msgInvalid_______\n")
+				DPrintf("kvserver %v receive an installSnapshot apply msg\n", kv.me)
+				kv.mu.Lock()
+				kv.ReadSnapshot(kv.persister.ReadSnapshot())
+				kv.mu.Unlock()
 				continue
 			}
-
 
 			op := msg.Command.(Op)
 			repeat := kv.CheckApplied(op.MsgId, op.ClientId)
@@ -159,6 +160,7 @@ func (kv *KVServer) WaitApplyCh() {
 				DPrintf("kvserver %v applying method = Get, do nothing but notify\n", kv.me)
 			}
 
+			kv.saveSnapshot(msg.CommandIndex)
 			if ch, ok := kv.notifyData[op.RequestId]; ok {
 				ch <- NotifyMsg{
 					Err:   OK,
@@ -173,8 +175,6 @@ func (kv *KVServer) WaitApplyCh() {
 
 	}
 }
-
-
 
 
 //
@@ -229,6 +229,43 @@ func (kv *KVServer) removeCh(id int64) {
 	kv.mu.Unlock()
 }
 
+func (kv *KVServer) saveSnapshot(index int) {
+	if kv.maxraftstate == -1 || kv.persister.RaftStateSize() < kv.maxraftstate {
+		return
+	}
+	DPrintf("server %v saving snapshot, rfsize = %v, kv.maxrfstate = %v\n", kv.me, kv.persister.RaftStateSize(), kv.maxraftstate)
+	w := new(bytes.Buffer)
+	e := labgob.NewEncoder(w)
+	if err := e.Encode(kv.data); err != nil {
+		panic(err)
+	}
+	if err := e.Encode(kv.lastApplied); err != nil {
+		panic(err)
+	}
+	kvsData := w.Bytes()
+	kv.rf.SaveStateAndSnapshot(index, kvsData)
+}
+
+func (kv *KVServer) ReadSnapshot(data []byte) {
+	if data == nil { // bootstrap without any state?
+		return
+	}
+	r := bytes.NewBuffer(data)
+	d := labgob.NewDecoder(r)
+	var lastApplied map[int64]int64
+	var kvdata map[string]string
+	if d.Decode(&kvdata) != nil ||
+		d.Decode(&lastApplied) != nil {
+		DPrintf("readSnapshot error\n")
+		os.Exit(1)
+	} else {
+		kv.lastApplied = lastApplied
+		kv.data = kvdata
+	}
+}
+
+
+
 
 //
 // servers[] contains the ports of the set of
@@ -261,9 +298,11 @@ func StartKVServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persiste
 		maxraftstate:    maxraftstate,
 		notifyData: 	 map[int64]chan NotifyMsg{},
 		lastApplied: 	 map[int64]int64{},
+		persister:		 persister,
 	}
 
 	kv.rf = raft.Make(servers, me, persister, kv.applyCh)
+	kv.ReadSnapshot(kv.persister.ReadSnapshot())
 	DPrintf("there are %v servers, me = %v\n", len(servers), me)
 	go kv.Periodic()
 	return &kv

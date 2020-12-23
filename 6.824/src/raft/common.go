@@ -39,20 +39,34 @@ func GetRandElectionTime() time.Duration{
 
 
 func (rf *Raft) lastLogTermIndex()(int, int) {
-	DPrintf("getting server %v lastlogTermIndex : %v \n", rf.me, rf.log)
+	// DPrintf("getting server %v lastlogTermIndex : %v \n", rf.me, rf.log)
 	n := len(rf.log)
-	return rf.log[n - 1].Term, n - 1
+	term := rf.log[n - 1].Term
+	index := rf.lastSnapshotIndex + len(rf.log) - 1
+	return term, index
 }
 
 
-func (rf *Raft) PrevLogTermIndex(index int)(int, int) {
+func (rf *Raft) getAEInfo(index int)(prevTerm int, prevIdx int, res []Log) {
+	DPrintf("leader %v getting server %v prev ", rf.me, index)
 	for i := 0; i < len(rf.peers); i ++ {
 		DPrintf("%v %v\n", rf.matchIndex[i], rf.nextIndex[i])
 	}
-	DPrintf("leader %v getting server %v prev ", rf.me, index)
-	prevIdx := rf.nextIndex[index] - 1
-	prevTerm := rf.log[prevIdx].Term
-	return prevTerm, prevIdx
+
+	lastLogTerm, lastLogIndex := rf.lastLogTermIndex()
+	if rf.nextIndex[index] <= rf.lastSnapshotIndex {
+		//  select any idx > rf.lastSnapshotIndex is ok, since reply will install snapshot
+		prevTerm = lastLogTerm
+		prevIdx = lastLogIndex
+		DPrintf("server %v prevIdx : %v,  lastSnapshotIndex : %v \n", rf.me, prevIdx, rf.lastSnapshotIndex)
+		return
+	} else {
+		prevIdx = rf.nextIndex[index] - 1
+		prevTerm = rf.log[prevIdx - rf.lastSnapshotIndex].Term
+		res = rf.log[rf.getRealLogIndex(rf.nextIndex[index]) :]
+		DPrintf("server %v prevIdx : %v,  lastSnapshotIndex : %v \n", rf.me, prevIdx, rf.lastSnapshotIndex)
+	}
+	return
 }
 
 
@@ -78,9 +92,7 @@ func (rf *Raft) resetElectionTimer() {
 
 
 func (rf *Raft) Lock(m string) {
-
-
-//	DPrintf("server %v requesting lock %v \n", rf.me, m)
+	// DPrintf("server %v requesting lock %v, lockseq : %v \n", rf.me, m, rf.LockSeq)
 
 	rf.mu.Lock()
 	rf.LockSeq = append(rf.LockSeq, m)

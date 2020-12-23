@@ -14,6 +14,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="428b95ac-c9d1-4caa-b44b-264550ee0976" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/raft/snapshot.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/kvraft/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/kvraft/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/raft/raft.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/raft/raft.go" afterDir="false" />
@@ -57,7 +58,7 @@
     <property name="configurable.Project.GOPATH.is.expanded" value="true" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
-    <property name="last_opened_file_path" value="$USER_HOME$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../6.824-golabs-2020-yzy" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -165,10 +166,10 @@
       <screen x="3000" y="0" width="2560" height="1409" />
     </state>
     <state x="3093" y="93" width="2375" height="1224" key="DirDiffDialog/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1605880748004" />
-    <state x="531" y="240" key="FileChooserDialogImpl" timestamp="1607425559094">
+    <state x="531" y="240" key="FileChooserDialogImpl" timestamp="1608030698592">
       <screen x="0" y="0" width="1500" height="970" />
     </state>
-    <state x="531" y="240" key="FileChooserDialogImpl/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1607425559094" />
+    <state x="531" y="240" key="FileChooserDialogImpl/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1608030698592" />
     <state x="3906" y="349" key="FileChooserDialogImpl/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1606732761727" />
     <state x="531" y="240" key="FileChooserDialogImpl/0.0.1500.970@0.0.1500.970" timestamp="1605837709482" />
     <state width="1458" height="229" key="GridCell.Tab.0.bottom" timestamp="1606730514526">
@@ -207,13 +208,13 @@
     <state x="324" y="0" width="1171" height="975" key="dock-window-1/0.0.1500.970/3000.0.2560.1409@0.0.1500.970" timestamp="1607393647186" />
     <state x="324" y="0" width="1171" height="975" maximized="true" key="dock-window-1/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1607397747912" />
     <state x="353" y="161" width="2013" height="1134" key="dock-window-1/0.0.2560.1409@0.0.2560.1409" timestamp="1605888602503" />
-    <state x="574" y="209" width="564" height="554" key="find.popup" timestamp="1608014035409">
+    <state x="305" y="258" width="564" height="554" key="find.popup" timestamp="1608034276960">
       <screen x="0" y="0" width="1500" height="970" />
     </state>
     <state x="574" y="209" width="564" height="554" key="find.popup/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1608014035409" />
     <state x="3390" y="246" width="566" height="804" key="find.popup/0.0.1500.970/3000.0.1920.1050@3000.0.1920.1050" timestamp="1606456495829" />
     <state x="3520" y="375" width="603" height="804" key="find.popup/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1607873775370" />
-    <state x="305" y="258" width="564" height="554" key="find.popup/0.0.1500.970@0.0.1500.970" timestamp="1607502946987" />
+    <state x="305" y="258" width="564" height="554" key="find.popup/0.0.1500.970@0.0.1500.970" timestamp="1608034276960" />
     <state x="979" y="303" width="603" height="804" key="find.popup/0.0.2560.1409@0.0.2560.1409" timestamp="1606009190401" />
     <state x="3551" y="546" key="ftp.server.browser" timestamp="1605879900603">
       <screen x="3000" y="0" width="2560" height="1409" />
@@ -223,12 +224,13 @@
       <screen x="3000" y="0" width="2560" height="1409" />
     </state>
     <state x="3580" y="707" key="publish.login/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1605879668768" />
-    <state x="3707" y="304" width="1147" height="985" key="search.everywhere.popup" timestamp="1607242342954">
-      <screen x="3000" y="0" width="2560" height="1409" />
+    <state x="415" y="210" width="673" height="679" key="search.everywhere.popup" timestamp="1608040223721">
+      <screen x="0" y="0" width="1500" height="970" />
     </state>
     <state x="417" y="212" width="672" height="678" key="search.everywhere.popup/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1606905015836" />
     <state x="3530" y="227" width="861" height="735" key="search.everywhere.popup/0.0.1500.970/3000.0.1920.1050@3000.0.1920.1050" timestamp="1606460551859" />
     <state x="3707" y="304" width="1147" height="985" key="search.everywhere.popup/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1607242342954" />
+    <state x="415" y="210" width="673" height="679" key="search.everywhere.popup/0.0.1500.970@0.0.1500.970" timestamp="1608040223721" />
     <state x="709" y="305" width="1147" height="985" key="search.everywhere.popup/0.0.2560.1409@0.0.2560.1409" timestamp="1606015021943" />
   </component>
 </project>
