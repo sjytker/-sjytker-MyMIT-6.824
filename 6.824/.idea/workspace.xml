@@ -14,10 +14,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="428b95ac-c9d1-4caa-b44b-264550ee0976" name="Default Changelist" comment="">
-<<<<<<< HEAD
       <change afterPath="$PROJECT_DIR$/src/raft/snapshot.go" afterDir="false" />
-=======
->>>>>>> 2694adff741d395474232a36415f966716f74bd9
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/kvraft/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/kvraft/server.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/raft/raft.go" beforeDir="false" afterPath="$PROJECT_DIR$/src/raft/raft.go" afterDir="false" />
@@ -61,11 +58,7 @@
     <property name="configurable.Project.GOPATH.is.expanded" value="true" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
-<<<<<<< HEAD
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../../6.824-golabs-2020-yzy" />
-=======
-    <property name="last_opened_file_path" value="$USER_HOME$" />
->>>>>>> 2694adff741d395474232a36415f966716f74bd9
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -215,21 +208,13 @@
     <state x="324" y="0" width="1171" height="975" key="dock-window-1/0.0.1500.970/3000.0.2560.1409@0.0.1500.970" timestamp="1607393647186" />
     <state x="324" y="0" width="1171" height="975" maximized="true" key="dock-window-1/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1607397747912" />
     <state x="353" y="161" width="2013" height="1134" key="dock-window-1/0.0.2560.1409@0.0.2560.1409" timestamp="1605888602503" />
-<<<<<<< HEAD
     <state x="305" y="258" width="564" height="554" key="find.popup" timestamp="1608034276960">
-=======
-    <state x="574" y="209" width="564" height="554" key="find.popup" timestamp="1608014035409">
->>>>>>> 2694adff741d395474232a36415f966716f74bd9
       <screen x="0" y="0" width="1500" height="970" />
     </state>
     <state x="574" y="209" width="564" height="554" key="find.popup/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1608014035409" />
     <state x="3390" y="246" width="566" height="804" key="find.popup/0.0.1500.970/3000.0.1920.1050@3000.0.1920.1050" timestamp="1606456495829" />
     <state x="3520" y="375" width="603" height="804" key="find.popup/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1607873775370" />
-<<<<<<< HEAD
     <state x="305" y="258" width="564" height="554" key="find.popup/0.0.1500.970@0.0.1500.970" timestamp="1608034276960" />
-=======
-    <state x="305" y="258" width="564" height="554" key="find.popup/0.0.1500.970@0.0.1500.970" timestamp="1607502946987" />
->>>>>>> 2694adff741d395474232a36415f966716f74bd9
     <state x="979" y="303" width="603" height="804" key="find.popup/0.0.2560.1409@0.0.2560.1409" timestamp="1606009190401" />
     <state x="3551" y="546" key="ftp.server.browser" timestamp="1605879900603">
       <screen x="3000" y="0" width="2560" height="1409" />

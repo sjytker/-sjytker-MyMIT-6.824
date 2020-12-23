@@ -94,12 +94,6 @@ func (rf *Raft) resetElectionTimer() {
 func (rf *Raft) Lock(m string) {
 	// DPrintf("server %v requesting lock %v, lockseq : %v \n", rf.me, m, rf.LockSeq)
 
-<<<<<<< HEAD
-=======
-
-//	DPrintf("server %v requesting lock %v \n", rf.me, m)
-
->>>>>>> 2694adff741d395474232a36415f966716f74bd9
 	rf.mu.Lock()
 	rf.LockSeq = append(rf.LockSeq, m)
 	//if len(rf.LockSeq) > 1 {

@@ -35,14 +35,10 @@ type KVServer struct {
 	maxraftstate int // snapshot if log grows this big
 	lastApplied map[int64]int64
 	notifyData map[int64]chan NotifyMsg
-<<<<<<< HEAD
 
 	persister      *raft.Persister
 	lastApplyIndex int
 	lastApplyTerm  int
-=======
-	// Your definitions here.
->>>>>>> 2694adff741d395474232a36415f966716f74bd9
 }
 
 
@@ -65,21 +61,10 @@ func (kv *KVServer) Get(args *GetArgs, reply *GetReply) {
 		RequestId:	nrand(),
 	}
 
-<<<<<<< HEAD
 	res := kv.waitForRaft(serverOp)
 	reply.Err = res.Err
 	reply.Value = res.Value
 
-=======
-	// situation : this msg is late, another same one is applied
-//	repeat := kv.CheckApplied(args.MsgId, args.ClientId)
-
-	//if !repeat {
-		res := kv.waitForRaft(serverOp)
-		reply.Err = res.Err
-		reply.Value = res.Value
-//	}
->>>>>>> 2694adff741d395474232a36415f966716f74bd9
 }
 
 func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
@@ -94,7 +79,6 @@ func (kv *KVServer) PutAppend(args *PutAppendArgs, reply *PutAppendReply) {
 		ClientId:	args.ClientId,
 		MsgId:	args.MsgId,
 		RequestId:	nrand(),
-<<<<<<< HEAD
 	}
 
 	// situation : this msg is late, another same one is applied
@@ -156,66 +140,6 @@ func (kv *KVServer) WaitApplyCh() {
 				kv.mu.Unlock()
 				continue
 			}
-=======
-	}
-
-	// situation : this msg is late, another same one is applied
-//	repeat := kv.CheckApplied(args.MsgId, args.ClientId)
-
-	// situation : double msg arrive, one is waiting to be applied.
-	//_, waitting := kv.notifyData[args.MsgId]
-	// after fully consideration, this situation must sent msg again
-	reply.Err = kv.waitForRaft(serverOp).Err
-}
-
-
-
-func (kv *KVServer) waitForRaft(op Op) (res NotifyMsg) {
-
-	waitTimer := time.NewTimer(WaitTimeout)
-	defer waitTimer.Stop()
-	_, _, isLeader := kv.rf.Start(op)
-
-	if !isLeader {
-		DPrintf("kvleader %v start() fail\n", kv.me)
-		res.Err = ErrWrongLeader
-		return
-	}
-
-	kv.mu.Lock()
-	ch := make(chan NotifyMsg)
-	kv.notifyData[op.RequestId] = ch
-	kv.mu.Unlock()
-
-	DPrintf("kvleader %v has start cmd, waits for applyCh\n", kv.me)
-	select {
-	case res =<- ch:
-		DPrintf("kvleader %v apply finish, op = %v\n", kv.me, op)
-		kv.removeCh(op.RequestId)
-		return
-	case <- waitTimer.C:
-		DPrintf("kvleader %v waitTimeout, return to client, op : %v\n", kv.me, op)
-		res.Err = ErrTimeOut
-		kv.removeCh(op.RequestId)
-		return
-	//case <- kv.stopCh:
-	//	return
-	}
-}
-
-
-func (kv *KVServer) WaitApplyCh() {
-
-	for {
-		DPrintf("kvserver %v waiting for applyCh\n", kv.me)
-		select {
-		case msg := <- kv.applyCh:
-			if !msg.CommandValid {
-				//todo
-				log.Fatal("________msgInvalid_______\n")
-				continue
-			}
-
 
 			op := msg.Command.(Op)
 			repeat := kv.CheckApplied(op.MsgId, op.ClientId)
@@ -236,42 +160,6 @@ func (kv *KVServer) WaitApplyCh() {
 				DPrintf("kvserver %v applying method = Get, do nothing but notify\n", kv.me)
 			}
 
-			if ch, ok := kv.notifyData[op.RequestId]; ok {
-				ch <- NotifyMsg{
-					Err:   OK,
-					Value: kv.data[op.Key],
-				}
-			}
-			kv.mu.Unlock()
-			DPrintf("kvserver %v notify finish, op = %v\n", kv.me, op)
-		case <- kv.stopCh:
-			return
-		}
-
-	}
-}
->>>>>>> 2694adff741d395474232a36415f966716f74bd9
-
-			op := msg.Command.(Op)
-			repeat := kv.CheckApplied(op.MsgId, op.ClientId)
-
-			DPrintf("kvserver %v receive from applyCh, op = %v, repeat = %v\n", kv.me, op, repeat)
-			kv.mu.Lock()
-			if !repeat && op.Method == "Put" {
-				kv.data[op.Key] = op.Value
-				DPrintf("kvserver %v applying method = Put, finish, op : %v: \n", kv.me, op)
-				kv.lastApplied[op.ClientId] = op.MsgId
-			} else if !repeat && op.Method == "Append" {
-				v:= kv.data[op.Key]
-				newS := v + op.Value
-				kv.data[op.Key] = newS
-				kv.lastApplied[op.ClientId] = op.MsgId
-				DPrintf("kvserver %v applying method = Append, newS = %v, op : %v\n", kv.me, newS, op)
-			} else if op.Method == "Get"{
-				DPrintf("kvserver %v applying method = Get, do nothing but notify\n", kv.me)
-			}
-
-<<<<<<< HEAD
 			kv.saveSnapshot(msg.CommandIndex)
 			if ch, ok := kv.notifyData[op.RequestId]; ok {
 				ch <- NotifyMsg{
@@ -287,8 +175,6 @@ func (kv *KVServer) WaitApplyCh() {
 
 	}
 }
-=======
->>>>>>> 2694adff741d395474232a36415f966716f74bd9
 
 
 //
@@ -343,7 +229,6 @@ func (kv *KVServer) removeCh(id int64) {
 	kv.mu.Unlock()
 }
 
-<<<<<<< HEAD
 func (kv *KVServer) saveSnapshot(index int) {
 	if kv.maxraftstate == -1 || kv.persister.RaftStateSize() < kv.maxraftstate {
 		return
@@ -381,8 +266,6 @@ func (kv *KVServer) ReadSnapshot(data []byte) {
 
 
 
-=======
->>>>>>> 2694adff741d395474232a36415f966716f74bd9
 
 //
 // servers[] contains the ports of the set of
@@ -415,10 +298,7 @@ func StartKVServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persiste
 		maxraftstate:    maxraftstate,
 		notifyData: 	 map[int64]chan NotifyMsg{},
 		lastApplied: 	 map[int64]int64{},
-<<<<<<< HEAD
 		persister:		 persister,
-=======
->>>>>>> 2694adff741d395474232a36415f966716f74bd9
 	}
 
 	kv.rf = raft.Make(servers, me, persister, kv.applyCh)
