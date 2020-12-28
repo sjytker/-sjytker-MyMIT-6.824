@@ -188,12 +188,13 @@ type RequestVoteReply struct {
 //
 func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 
-	DPrintf("candidate %v's term = %v, my(%v) term = %v\n", args.CandidateId, args.Term, rf.me, rf.currentTerm)
+
 	rf.Lock("lock in RV")
 	defer rf.Unlock("lock in RV")
 
 	lastLogTerm, lastLogIndex := rf.lastLogTermIndex()
 //	DPrintf("candidate %v's term = %v, my(%v) term = %v\n", args.CandidateId, args.Term, rf.me, rf.currentTerm)
+	DPrintf("candidate %v's term = %v, my(%v) term = %v\n", args.CandidateId, args.Term, rf.me, rf.currentTerm)
 	DPrintf("args.LastLogterm = %v, args.LastLogIndex = %v, lastTerm = %v, lastIndex = %v\n", args.LastLogterm, args.LastLogIndex, lastLogTerm, lastLogIndex)
 
 
@@ -396,7 +397,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 	if !isLeader {
 		// DPrintf("putting command, but candidate %v is not a leader", rf.me)
 	} else {
-		DPrintf("putting command in leader %v \n", rf.me)
+		DPrintf("putting command in leader %v, command : %v \n", rf.me, command)
 		log := Log{
 			Command: command,
 			Term: term,
@@ -481,9 +482,9 @@ func (rf * Raft) Election() {
 
 	count := rf.SendRequest(&args)
 
+	rf.Lock("lock2 in election") // lock2
 	DPrintf("candidate %v state = %v, request count : %v, currentTerm = %v, args.Term = %v, len(rf.peers) / 2: %v \n", rf.me, rf.state, count, rf.currentTerm, args.Term, len(rf.peers) / 2)
 
-	rf.Lock("lock2 in election") // lock2
 	if rf.state == CANDIDATE && rf.currentTerm == args.Term && count >= len(rf.peers) / 2 {
 		// leader comes to power
 		// initialize all nextIndex values to the index just after the last one in leader's k

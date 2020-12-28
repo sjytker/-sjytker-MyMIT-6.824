@@ -29,7 +29,7 @@ func MakeClerk(servers []*labrpc.ClientEnd) *Clerk {
 	return ck
 }
 
-func (ck *Clerk) Query(num int) Config {
+func (ck *Clerk) Query(num int) *Config {
 	args := &QueryArgs{
 		Num:      num,
 		ClientId: ck.clientId,
@@ -42,7 +42,7 @@ func (ck *Clerk) Query(num int) Config {
 			var reply QueryReply
 			ok := srv.Call("ShardMaster.Query", args, &reply)
 			if ok && reply.WrongLeader == false {
-				return reply.Config
+				return &reply.Config
 			}
 		}
 		time.Sleep(100 * time.Millisecond)
@@ -50,6 +50,7 @@ func (ck *Clerk) Query(num int) Config {
 }
 
 func (ck *Clerk) Join(servers map[int][]string) {
+	DPrintf("client %v receive join, servers = %v\n", ck.clientId, servers)
 	args := &JoinArgs{
 		Servers:  servers,
 		ClientId: ck.clientId,
@@ -108,4 +109,36 @@ func (ck *Clerk) Move(shard int, gid int) {
 		}
 		time.Sleep(100 * time.Millisecond)
 	}
+}
+
+func (ck *Clerk) Stable() bool {
+	args := struct {}{}
+
+	for _, srv := range ck.servers {
+		var reply StableReply
+		if ok := srv.Call("ShardMaster.Stable", args, &reply); ok {
+			if reply.Err == OK {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+
+func (ck *Clerk) FindGid(shard int) int {
+	args := findGidArgs{shard: shard}
+
+	for {
+		for _, srv := range ck.servers {
+			var reply findGidReply
+			if ok := srv.Call("ShardMaster.findGid", args, &reply); ok {
+				if reply.Err == OK {
+					return reply.gid
+				}
+			}
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	return -1
 }

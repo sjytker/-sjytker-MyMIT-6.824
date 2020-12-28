@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"sync"
 )
 
@@ -70,10 +69,5 @@ func main(){
 	//wg.Wait()
 	//fmt.Println(len(lst))
 
-
-	a := make(map[int]int)
-	a[5] = 10
-	a[2] = 1
-	a[3] = 2323
-	fmt.Println(len(a))
+	mp := make()
 }

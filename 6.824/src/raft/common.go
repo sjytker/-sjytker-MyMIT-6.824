@@ -3,6 +3,7 @@ package raft
 import (
 	"math/rand"
 	"time"
+	"../labgob"
 )
 
 
@@ -96,12 +97,7 @@ func (rf *Raft) Lock(m string) {
 
 	rf.mu.Lock()
 	rf.LockSeq = append(rf.LockSeq, m)
-	//if len(rf.LockSeq) > 1 {
-	//	log.Fatal("deadLock!  current LockSeq : ", rf.LockSeq, len(rf.LockSeq))
-	//}
 
-//	DPrintf("server %v got lock ---> %v \n", rf.me, m)
-	//DPrintf("server %v Lock seq : %v \n", rf.me, rf.lockSeq)
 }
 
 
@@ -118,7 +114,8 @@ func (rf *Raft) Unlock(m string) {
 	//	DPrintf("server %v unlock error? m = %v, lockseq = %v\n", rf.me, m, rf.LockSeq)
 	}
 	rf.mu.Unlock()
+}
 
-//	rf.LockSeq = rf.lockSeq[:len(rf.LockSeq) - 1]
-//	DPrintf("server %v releasing %v \n", rf.me, m)
+func init() {
+	labgob.Register(map[int][]string{})
 }

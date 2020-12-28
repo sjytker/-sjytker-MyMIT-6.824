@@ -27,9 +27,10 @@ type ShardMaster struct {
 
 	// Your data here.
 
-	configs []Config // indexed by config num
+	configs     []Config // indexed by config num
 	lastApplies map[int64]int64
-	notifyData map[int64]chan NotifyMsg
+	notifyData  map[int64]chan NotifyMsg
+	state       int
 }
 
 
@@ -59,7 +60,24 @@ func (sm *ShardMaster) Join(args *JoinArgs, reply *JoinReply) {
 		Args :	   *args,
 	}
 
+	// waits for STABLE
+	for {
+		sm.mu.Lock()
+		if sm.state == STABLE {
+			sm.mu.Unlock()
+			break
+		}
+		sm.mu.Unlock()
+		time.Sleep(10 * time.Millisecond)
+	}
+
+	sm.changeState(TRANSITION)
 	res := sm.waitForRaft(op)
+
+	sm.changeState(FREEZE)
+	time.Sleep(FreezeTime)		//  waits for ShardKV to migrate
+
+	sm.changeState(STABLE)
 	reply.WrongLeader = res.WrongLeader
 	reply.Err = res.Err
 }
@@ -80,7 +98,24 @@ func (sm *ShardMaster) Leave(args *LeaveArgs, reply *LeaveReply) {
 		Args:	   *args,
 	}
 
+	// waits for STABLE
+	for {
+		sm.mu.Lock()
+		if sm.state == STABLE {
+			sm.mu.Unlock()
+			break
+		}
+		sm.mu.Unlock()
+		time.Sleep(10 * time.Millisecond)
+	}
+
+	sm.changeState(TRANSITION)
 	res := sm.waitForRaft(op)
+
+	sm.changeState(FREEZE)
+	time.Sleep(FreezeTime)		//  waits for ShardKV to migrate
+
+	sm.changeState(STABLE)
 	reply.WrongLeader = res.WrongLeader
 	reply.Err = res.Err
 }
@@ -101,7 +136,25 @@ func (sm *ShardMaster) Move(args *MoveArgs, reply *MoveReply) {
 		Args:	   *args,
 	}
 
+	// waits for STABLE
+	for {
+		sm.mu.Lock()
+		if sm.state == STABLE {
+			sm.mu.Unlock()
+			break
+		}
+		sm.mu.Unlock()
+		time.Sleep(10 * time.Millisecond)
+	}
+
+	// todo: move has not change group len, will it fail?
+	sm.changeState(TRANSITION)
 	res := sm.waitForRaft(op)
+
+	//sm.changeState(FREEZE)
+	//time.Sleep(FreezeTime)		//  waits for ShardKV to migrate
+
+	sm.changeState(STABLE)
 	reply.WrongLeader = res.WrongLeader
 	reply.Err = res.Err
 }
@@ -122,6 +175,18 @@ func (sm *ShardMaster) Query(args *QueryArgs, reply *QueryReply) {
 		Args:	   *args,
 	}
 
+	// note : different from above, we could query FREEZE and STABALE state
+	for {
+		sm.mu.Lock()
+		if sm.state != TRANSITION {
+			sm.mu.Unlock()
+			break
+		}
+		sm.mu.Unlock()
+		time.Sleep(10 * time.Millisecond)
+	}
+
+	// DPrintf()
 	res := sm.waitForRaft(op)
 	reply.WrongLeader = res.WrongLeader
 	reply.Err = res.Err
@@ -237,7 +302,7 @@ func (sm *ShardMaster) CheckApplied(msgId int64, clientId int64) bool {
 
 
 func (sm *ShardMaster) join(args JoinArgs) {
-	DPrintf("server %v receive join, args = %v\n", sm.me, args)
+	DPrintf("server %v applying join, args = %v\n", sm.me, args)
 	config := sm.getConfigCopy(-1)
 	config.Num ++
 
@@ -249,6 +314,7 @@ func (sm *ShardMaster) join(args JoinArgs) {
 	sm.Lock("lockInJoin")
 	sm.configs = append(sm.configs, config)
 	sm.Unlock("lockInJoin")
+	DPrintf("shardmaster %v join finish, group len : %v\n", sm.me, len(config.Groups))
 }
 
 
@@ -269,6 +335,7 @@ func (sm *ShardMaster) leave(args LeaveArgs) {
 	sm.Lock("lockInLeave2")
 	sm.configs = append(sm.configs, config)
 	sm.Unlock("lockInLeave2")
+	DPrintf("shardmaster %v leave finish, group len : %v\n", sm.me, len(config.Groups))
 }
 
 
@@ -479,11 +546,37 @@ func (sm *ShardMaster) getConfigCopy(i int) Config{
 	sm.Lock("lockIngetConfigCopy")
 	defer sm.Unlock("lockIngetConfigCopy")
 	if (i < 0 || i >= len(sm.configs)) {
-		return sm.configs[len(sm.configs) - 1].copy()
+		return sm.configs[len(sm.configs) - 1].Copy()
 	} else {
-		return sm.configs[i].copy()
+		return sm.configs[i].Copy()
 	}
 }
+
+func (sm *ShardMaster) Stable(args interface{}, stableReply *StableReply) {
+	stableReply.Err = ErrTransition
+	sm.Lock("CheckStable")
+	if sm.state == STABLE {
+		stableReply.Err = OK
+	}
+	sm.Unlock("CheckStable")
+}
+
+func (sm *ShardMaster) findGid(args *findGidArgs, reply *findGidReply) {
+	if sm.state != STABLE {
+		reply.Err = ErrTransition
+		return
+	}
+	config := sm.getConfigCopy(-1)
+	reply.gid = config.Shards[args.shard]
+	reply.Err = OK
+}
+
+func (sm *ShardMaster) changeState(state int) {
+	sm.mu.Lock()
+	sm.state = state
+	sm.mu.Unlock()
+}
+
 
 //
 // servers[] contains the ports of the set of
@@ -501,9 +594,10 @@ func StartServer(servers []*labrpc.ClientEnd, me int, persister *raft.Persister)
 		lastApplies: make(map[int64]int64),
 		notifyData:  make(map[int64]chan NotifyMsg),
 		LockSeq :	 make([]string, 0),
+		state: 		 STABLE,
 	}
 
-	sm.configs[0].Groups = map[int][]string{}
+	sm.configs[0].Groups = make(map[int][]string)
 	sm.rf = raft.Make(servers, me, persister, sm.applyCh)
 
 	labgob.Register(Op{})

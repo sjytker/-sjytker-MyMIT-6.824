@@ -19,6 +19,8 @@ type InstallSnapshotReply struct {
 
 func (rf *Raft) SaveStateAndSnapshot(index int, snapshot []byte) {
 
+	rf.mu.Lock()
+	defer rf.mu.Unlock()
 	if index < rf.lastSnapshotIndex {
 		return
 	}

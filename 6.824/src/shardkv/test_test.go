@@ -29,11 +29,14 @@ func TestStaticShards(t *testing.T) {
 	cfg := make_config(t, 3, false, -1)
 	defer cfg.cleanup()
 
+//	DPrintf("TestStaticShards make_config finish\n")
 	ck := cfg.makeClient()
+//	DPrintf("TestStaticShards makeClient finish\n")
 
 	cfg.join(0)
 	cfg.join(1)
 
+	DPrintf("TestStaticShards join finish\n")
 	n := 10
 	ka := make([]string, n)
 	va := make([]string, n)
@@ -45,6 +48,8 @@ func TestStaticShards(t *testing.T) {
 	for i := 0; i < n; i++ {
 		check(t, ck, ka[i], va[i])
 	}
+
+	DPrintf("TestStaticShards put finish\n")
 
 	// make sure that the data really is sharded by
 	// shutting down one shard and checking that some
@@ -78,6 +83,7 @@ func TestStaticShards(t *testing.T) {
 		t.Fatalf("expected 5 completions with one shard dead; got %v\n", ndone)
 	}
 
+	DPrintf("TestStaticShards final check\n")
 	// bring the crashed shard/group back to life.
 	cfg.StartGroup(1)
 	for i := 0; i < n; i++ {
@@ -110,7 +116,7 @@ func TestJoinLeave(t *testing.T) {
 	}
 
 	cfg.join(1)
-
+	DPrintf("TestJoinLeave join2 start\n")
 	for i := 0; i < n; i++ {
 		check(t, ck, ka[i], va[i])
 		x := randstring(5)
@@ -118,15 +124,18 @@ func TestJoinLeave(t *testing.T) {
 		va[i] += x
 	}
 
+	DPrintf("TestJoinLeave leave start\n")
 	cfg.leave(0)
 
 	for i := 0; i < n; i++ {
 		check(t, ck, ka[i], va[i])
+		DPrintf("TestJoinLeave check %v finish\n", i)
 		x := randstring(5)
 		ck.Append(ka[i], x)
 		va[i] += x
 	}
 
+	DPrintf("TestJoinLeave leave1 check finish\n")
 	// allow time for shards to transfer.
 	time.Sleep(1 * time.Second)
 
@@ -135,6 +144,7 @@ func TestJoinLeave(t *testing.T) {
 
 	for i := 0; i < n; i++ {
 		check(t, ck, ka[i], va[i])
+
 	}
 
 	fmt.Printf("  ... Passed\n")
@@ -162,9 +172,14 @@ func TestSnapshot(t *testing.T) {
 		check(t, ck, ka[i], va[i])
 	}
 
+	DPrintf("TestSnapshot check1 finish\n")
+
 	cfg.join(1)
+	DPrintf("TestSnapshot join1 finish\n")
 	cfg.join(2)
+	DPrintf("TestSnapshot join2 finish\n")
 	cfg.leave(0)
+	DPrintf("TestSnapshot leave0 finish\n")
 
 	for i := 0; i < n; i++ {
 		check(t, ck, ka[i], va[i])
@@ -173,8 +188,12 @@ func TestSnapshot(t *testing.T) {
 		va[i] += x
 	}
 
+	DPrintf("TestSnapshot check2 finish\n")
+
 	cfg.leave(1)
+	DPrintf("TestSnapshot leave1 finish\n")
 	cfg.join(0)
+	DPrintf("TestSnapshot join0 finish\n")
 
 	for i := 0; i < n; i++ {
 		check(t, ck, ka[i], va[i])
@@ -189,6 +208,7 @@ func TestSnapshot(t *testing.T) {
 		check(t, ck, ka[i], va[i])
 	}
 
+	DPrintf("TestSnapshot check3 finish\n")
 	time.Sleep(1 * time.Second)
 
 	cfg.checklogs()
@@ -230,6 +250,8 @@ func TestMissChange(t *testing.T) {
 		check(t, ck, ka[i], va[i])
 	}
 
+	DPrintf("TestMissChange check1 finish\n")
+
 	cfg.join(1)
 
 	cfg.ShutdownServer(0, 0)
@@ -237,8 +259,11 @@ func TestMissChange(t *testing.T) {
 	cfg.ShutdownServer(2, 0)
 
 	cfg.join(2)
+	DPrintf("TestMissChange join2 finish\n")
 	cfg.leave(1)
+	DPrintf("TestMissChange leave1 finish\n")
 	cfg.leave(0)
+	DPrintf("TestMissChange leave0 finish\n")
 
 	for i := 0; i < n; i++ {
 		check(t, ck, ka[i], va[i])
@@ -247,6 +272,7 @@ func TestMissChange(t *testing.T) {
 		va[i] += x
 	}
 
+	DPrintf("TestMissChange check2 finish\n")
 	cfg.join(1)
 
 	for i := 0; i < n; i++ {
@@ -255,6 +281,8 @@ func TestMissChange(t *testing.T) {
 		ck.Append(ka[i], x)
 		va[i] += x
 	}
+
+	DPrintf("TestMissChange check3 finish\n")
 
 	cfg.StartServer(0, 0)
 	cfg.StartServer(1, 0)
@@ -266,6 +294,8 @@ func TestMissChange(t *testing.T) {
 		ck.Append(ka[i], x)
 		va[i] += x
 	}
+
+	DPrintf("TestMissChange check4 finish\n")
 
 	time.Sleep(2 * time.Second)
 
@@ -282,6 +312,8 @@ func TestMissChange(t *testing.T) {
 		ck.Append(ka[i], x)
 		va[i] += x
 	}
+
+	DPrintf("TestMissChange check5 finish\n")
 
 	cfg.StartServer(0, 1)
 	cfg.StartServer(1, 1)

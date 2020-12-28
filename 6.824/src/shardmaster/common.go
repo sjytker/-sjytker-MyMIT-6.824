@@ -49,7 +49,15 @@ const (
 	ErrNoKey       = "ErrNoKey"
 	ErrWrongLeader = "ErrWrongLeader"
 	ErrTimeOut 	   = "ErrTimeOut"
+	ErrTransition  = "ErrTransition"
 	WaitTimeout = 500 * time.Millisecond
+	FreezeTime = 500 * time.Millisecond
+)
+
+const (
+	STABLE	   = iota
+	TRANSITION
+	FREEZE
 )
 
 type Err string
@@ -100,15 +108,19 @@ type QueryReply struct {
 	Config      Config
 }
 
+type StableReply struct {
+	Err Err
+}
 
-func (c Config) copy() Config {
+
+func (c *Config) Copy() Config {
 	res := Config{
 		Num:    c.Num,
 		Shards: c.Shards,
 		Groups: make(map[int][]string),
 	}
-	for k, v := range c.Groups {
-		res.Groups[k] = v
+	for gid, s := range c.Groups {
+		res.Groups[gid] = append([]string{}, s...)
 	}
 	return res
 }
@@ -117,6 +129,8 @@ func (c Config) copy() Config {
 func init() {
 	labgob.Register(map[int][]string{})
 	labgob.Register(Op{})
+	labgob.Register(Config{})
+
 	labgob.Register(JoinArgs{})
 	labgob.Register(LeaveArgs{})
 	labgob.Register(MoveArgs{})
@@ -159,4 +173,14 @@ func (rf *ShardMaster) Unlock(m string) {
 
 	//	rf.LockSeq = rf.lockSeq[:len(rf.LockSeq) - 1]
 	//	DPrintf("server %v releasing %v \n", rf.me, m)
+}
+
+
+type findGidArgs struct {
+	shard int
+}
+
+type findGidReply struct {
+	gid int
+	Err Err
 }

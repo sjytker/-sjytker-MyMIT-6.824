@@ -41,7 +41,7 @@ func (rf *Raft) appendEntriesToPeer(index int) {
 		rf.resetElectionTimer()
 
 		prevLogTerm, prevLogIndex, AELog := rf.getAEInfo(index)
-		DPrintf("leader %v log len: %v, log : %v, lastApplied : %v, commitIndex : %v\n", rf.me, len(rf.log), rf.log, rf.lastApplied, rf.commitIndex)
+	//	DPrintf("leader %v log len: %v, log : %v, lastApplied : %v, commitIndex : %v\n", rf.me, len(rf.log), rf.log, rf.lastApplied, rf.commitIndex)
 		DPrintf("leader %v currentTerm : %v \n", rf.me, rf.currentTerm)
 		DPrintf("leader %v prevLogTerm = %v, prevLogIndex = %v, nextIndex[%v] = %v\n", rf.me, prevLogTerm, prevLogIndex, index, rf.nextIndex[index])
 
@@ -53,6 +53,8 @@ func (rf *Raft) appendEntriesToPeer(index int) {
 			Entries:      AELog,
 			LeaderCommit: rf.commitIndex,
 		}
+
+		DPrintf("leader %v sending to % v, args : %v \n", rf.me, index, args)
 
 		// If rejected:
 		// first check NextIndex == -1, means out of order
@@ -161,7 +163,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 	rf.Lock("lock in AE")
 	defer rf.Unlock("lock in AE")
 
-	DPrintf("server %v receiving AE from %v\n", rf.me, args.LeaderId)
+	DPrintf("server %v receiving AE from %v\n", rf.me, args)
 
 	reply.XTerm, reply.XIndex, reply.XLen = -1, -1, -1
 
@@ -253,7 +255,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 
 
 	DPrintf("follower %v's commitIndex : %v, applyIndex : %v\n", rf.me, rf.commitIndex, rf.lastApplied)
-	DPrintf("follower %v's log : %v, %v\n", rf.me, len(rf.log), rf.log)
+//	DPrintf("follower %v's log : %v, %v\n", rf.me, len(rf.log), rf.log)
 }
 
 
