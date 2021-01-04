@@ -55,11 +55,10 @@ func NewMaster(files []string, nReduce int) *Master {
 func (m *Master) server() {
 	rpc.Register(m)
 	rpc.HandleHTTP()
-	//l, e := net.Listen("tcp", ":1234")
 	sockname := masterSock()
 	os.Remove(sockname)
 	l, e := net.Listen("unix", sockname)
-//	l, e := net.Listen("tcp", "localhost:7000")
+
 	if e != nil {
 		log.Fatal("listen error:", e)
 	}
@@ -71,14 +70,7 @@ func (m *Master) server() {
 // if the entire job has finished.
 //
 func (m *Master) Done() bool {
-	//if m.phase != "reduce_barrier" {
-	//	return false
-	//}
-	//for i := 0; i < m.nReduce; i ++ {
-	//	if m.allTask[i].Status != COMPLETED {
-	//		return false
-	//	}
-	//}
+
 	return m.phase == "fin"
 }
 
@@ -134,20 +126,14 @@ func (m *Master) ReportTask(args *ReportArgs, reply *ReportReply) error{
 	defer m.mutex.Unlock()
 	task := args.Task
 	phase := task.Phase
-//	fmt.Println("in ReportTask : ", task)
+
 	if find := strings.Contains(phase, "map"); find {
 		m.allTask[task.Imap].Status = COMPLETED
 	}
 	if find := strings.Contains(phase, "reduce"); find {
 		m.allTask[task.IReduce].Status = COMPLETED
 	}
-//	fmt.Println("in ReportTask, imap, ireduce : ", args.Imap,  args.IReduce)
-//	if args.Imap != -1 {
-//		master.allTask[task.Imap].Status = COMPLETED
-//	}
-//	if args.IReduce != -1 {
-//		master.allTask[task.IReduce].Status = COMPLETED
-//	}
+
 	go m.schedule()
 	return nil
 }
@@ -184,8 +170,7 @@ func (master *Master) getTask(i int) *Task{
 func (master *Master) schedule() {
 	master.mutex.Lock()
 //	defer master.mutex.Unlock()
-//	finishMap := true
-//	finishReduce := true
+
 	barrier := true
 	hasUnlocked := false
 	if master.phase == "map" {
@@ -205,7 +190,7 @@ func (master *Master) schedule() {
 		if barrier {
 			master.phase = "map_barrier"
 		}
-	//	fmt.Println(master.freeTaskQueue)
+
 	} else if master.phase == "map_barrier" {
 		allComplete := true
 	//	finishReduce = false
@@ -295,14 +280,7 @@ func (master *Master) schedule() {
 	if !hasUnlocked {
 		master.mutex.Unlock()
 	}
-	//fmt.Println("current freeTaskQueue")
-	//fmt.Println("finishMap : ", finishMap)
-	//fmt.Println("finishReduce : ", finishReduce)
-//	fmt.Println("barrier : ", barrier)
-//	for _, t := range master.freeTaskQueue {
-//	//	fmt.Printf("%v\t", t)
-//		fmt.Println(t)
-//	}
+
 	fmt.Println("")
 }
 

@@ -58,13 +58,13 @@ func (kv *ShardKV) applyOp(msg raft.ApplyMsg, op Op) {
 		DPrintf("gid %v ShardKV %v applying method = Put, finish, op : %v \n", kv.gid, kv.me, op)
 		DPrintf("gid %v ShardKV %v kv.data[op.Shard] len = %v, lastApplied = %v \n", kv.gid, kv.me, len(kv.data[op.Shard]), kv.lastApplied)
 
-		if len(kv.data[op.Shard]) == 0 {
-			kv.data[op.Shard] = make(map[string]string)
-		}
 		if _, ok := kv.data[op.Shard];!ok {
 			kv.data[op.Shard] = make(map[string]string)
 		}
 
+		if kv.data[op.Shard] == nil {
+			kv.data[op.Shard] = make(map[string]string)
+		}
 		kv.data[op.Shard][op.Key] = op.Value
 		kv.lastApplied[op.ClientId] = op.MsgId
 

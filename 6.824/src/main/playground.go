@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"sync"
 )
 
@@ -69,5 +70,21 @@ func main(){
 	//wg.Wait()
 	//fmt.Println(len(lst))
 
-	mp := make()
+	var x, y interface{}
+	x = "ab"
+	y = "cd"
+	fmt.Println(x, y)
+	x, y = swap(x, y)
+	fmt.Println(x, y)
+}
+
+
+func swap(x interface{}, y interface{}) (interface{}, interface{}){
+	//var t interface{}
+	//t = *x
+	//*x = *y
+	//*y = t
+//	fmt.Println(*x, *y)
+
+	return y, x
 }

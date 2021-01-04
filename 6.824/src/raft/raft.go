@@ -198,46 +198,6 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 	DPrintf("args.LastLogterm = %v, args.LastLogIndex = %v, lastTerm = %v, lastIndex = %v\n", args.LastLogterm, args.LastLogIndex, lastLogTerm, lastLogIndex)
 
 
-	//reply.Term = rf.currentTerm
-	//reply.VoteGranted = false
-
-	//if args.Term < rf.currentTerm {
-	//	return
-	//} else if args.Term == rf.currentTerm {
-	//	if rf.state == LEADER {
-	//		return
-	//	}
-	//	if rf.voteFor == args.CandidateId {
-	//		reply.VoteGranted = true
-	//		return
-	//	}
-	//	if rf.voteFor != -1 && rf.voteFor != args.CandidateId {
-	//		// 已投给其他 server
-	//		return
-	//	}
-	//	// 还一种可能:没有投票
-	//}
-	//
-	//defer rf.persist()
-	//if args.Term > rf.currentTerm {
-	//	rf.currentTerm = args.Term
-	//	rf.voteFor = -1
-	//	rf.changeRole(FOLLOWER)
-	//}
-	//
-	//if lastLogTerm > args.LastLogterm || (args.LastLogterm == lastLogTerm && args.LastLogIndex < lastLogIndex) {
-	//	// 选取限制
-	//	return
-	//}
-	//
-	//rf.currentTerm = args.Term
-	//rf.voteFor = args.CandidateId
-	//reply.VoteGranted = true
-	//rf.changeRole(FOLLOWER)
-	//rf.resetElectionTimer()
-	//DPrintf("vote for:%d", args.CandidateId)
-	//return
-
 	defer rf.persist()
 	if args.Term < rf.currentTerm {
 		DPrintf("candidate %v's term is smaller than %v, reject \n", args.CandidateId, rf.me)

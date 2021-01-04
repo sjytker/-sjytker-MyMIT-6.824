@@ -59,16 +59,6 @@ func ihash(key string) int {
 }
 
 
-//func (worker *Worker) ReportTask(taskType string, mapTaskNum int, iReduce int) error{
-//	if taskType == "map" {
-//		worker.ReportMapTask(mapTaskNum)
-//	} else {
-//		worker.ReportReduceTask(iReduce)
-//	}
-//	return nil
-//}
-
-
 
 func (worker *Worker) doMapTask(task *Task) error{
 	fmt.Printf("worker %v opening file : %v\n", worker.workerId, task.FileName)

@@ -1,24 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="9fcda723-55aa-4cbf-a267-4d85aa1dc091" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/kvraft/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/kvraft/common.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/kvraft/tmp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/kvraft/tmp1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/6.824/lab1/遇到的 bugs.md" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/6.824/src/main/playground.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/main/playground.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/raft/append_entries.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/raft/append_entries.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/raft/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/raft/common.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/raft/persister.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/raft/persister.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/6.824/src/mr/master.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/mr/master.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/6.824/src/mr/worker.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/mr/worker.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/6.824/src/raft/raft.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/raft/raft.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/raft/snapshot.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/raft/snapshot.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/shardkv/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/shardkv/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/shardkv/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/shardkv/common.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/shardkv/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/shardkv/server.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/shardkv/test_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/shardkv/test_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/shardmaster/client.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/shardmaster/client.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/shardmaster/common.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/shardmaster/common.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/6.824/src/shardmaster/server.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/shardmaster/server.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/6.824/src/raft/single" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/6.824/src/raft/tester" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/6.824/src/shardkv/waitApply.go" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/src/shardkv/waitApply.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/6.824/设计思路.md" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/设计思路.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/6.824/遇到的问题.md" beforeDir="false" afterPath="$PROJECT_DIR$/6.824/遇到的问题.md" afterDir="false" />
     </list>
@@ -51,13 +61,14 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="go.import.settings.migrated" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../6.824-golabs-2020-yzy" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RunManager">
     <configuration name="go build playground.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
@@ -78,6 +89,17 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="WindowStateProjectService">
     <state x="509" y="293" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1609059070644">
       <screen x="0" y="0" width="1500" height="970" />
@@ -87,38 +109,43 @@
       <screen x="0" y="0" width="2560" height="1409" />
     </state>
     <state x="540" y="302" key="FileChooserDialogImpl/0.0.2560.1409@0.0.2560.1409" timestamp="1608826250409" />
-    <state width="1458" height="178" key="GridCell.Tab.0.bottom" timestamp="1608974450338">
+    <state width="1458" height="178" key="GridCell.Tab.0.bottom" timestamp="1609481055690">
       <screen x="0" y="0" width="1500" height="970" />
     </state>
-    <state width="1458" height="178" key="GridCell.Tab.0.bottom/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1608974450338" />
+    <state width="1458" height="178" key="GridCell.Tab.0.bottom/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1609481055690" />
     <state width="1877" height="295" key="GridCell.Tab.0.bottom/0.0.1500.970/3000.0.1920.1050@3000.0.1920.1050" timestamp="1608516720565" />
     <state width="1217" height="271" key="GridCell.Tab.0.bottom/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1608651816673" />
-    <state width="1458" height="271" key="GridCell.Tab.0.bottom/0.0.2560.1409@0.0.2560.1409" timestamp="1608728151742" />
+    <state width="1458" height="178" key="GridCell.Tab.0.bottom/0.0.2560.1409@0.0.2560.1409" timestamp="1609170611379" />
     <state width="1458" height="259" key="GridCell.Tab.0.bottom/3000.0.2560.1400/0.0.1500.970@3000.0.2560.1400" timestamp="1608300473141" />
-    <state width="1458" height="178" key="GridCell.Tab.0.center" timestamp="1608974450338">
+    <state width="1458" height="178" key="GridCell.Tab.0.center" timestamp="1609481055690">
       <screen x="0" y="0" width="1500" height="970" />
     </state>
-    <state width="1458" height="178" key="GridCell.Tab.0.center/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1608974450338" />
+    <state width="1458" height="178" key="GridCell.Tab.0.center/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1609481055690" />
     <state width="1877" height="295" key="GridCell.Tab.0.center/0.0.1500.970/3000.0.1920.1050@3000.0.1920.1050" timestamp="1608516720565" />
     <state width="1217" height="271" key="GridCell.Tab.0.center/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1608651816672" />
-    <state width="1458" height="271" key="GridCell.Tab.0.center/0.0.2560.1409@0.0.2560.1409" timestamp="1608728151741" />
+    <state width="1458" height="178" key="GridCell.Tab.0.center/0.0.2560.1409@0.0.2560.1409" timestamp="1609170611379" />
     <state width="1458" height="259" key="GridCell.Tab.0.center/3000.0.2560.1400/0.0.1500.970@3000.0.2560.1400" timestamp="1608300473141" />
-    <state width="1458" height="178" key="GridCell.Tab.0.left" timestamp="1608974450338">
+    <state width="1458" height="178" key="GridCell.Tab.0.left" timestamp="1609481055690">
       <screen x="0" y="0" width="1500" height="970" />
     </state>
-    <state width="1458" height="178" key="GridCell.Tab.0.left/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1608974450338" />
+    <state width="1458" height="178" key="GridCell.Tab.0.left/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1609481055690" />
     <state width="1877" height="295" key="GridCell.Tab.0.left/0.0.1500.970/3000.0.1920.1050@3000.0.1920.1050" timestamp="1608516720564" />
     <state width="1217" height="271" key="GridCell.Tab.0.left/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1608651816672" />
-    <state width="1458" height="271" key="GridCell.Tab.0.left/0.0.2560.1409@0.0.2560.1409" timestamp="1608728151741" />
+    <state width="1458" height="178" key="GridCell.Tab.0.left/0.0.2560.1409@0.0.2560.1409" timestamp="1609170611378" />
     <state width="1458" height="259" key="GridCell.Tab.0.left/3000.0.2560.1400/0.0.1500.970@3000.0.2560.1400" timestamp="1608300473141" />
-    <state width="1458" height="178" key="GridCell.Tab.0.right" timestamp="1608974450338">
+    <state width="1458" height="178" key="GridCell.Tab.0.right" timestamp="1609481055690">
       <screen x="0" y="0" width="1500" height="970" />
     </state>
-    <state width="1458" height="178" key="GridCell.Tab.0.right/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1608974450338" />
+    <state width="1458" height="178" key="GridCell.Tab.0.right/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1609481055690" />
     <state width="1877" height="295" key="GridCell.Tab.0.right/0.0.1500.970/3000.0.1920.1050@3000.0.1920.1050" timestamp="1608516720565" />
     <state width="1217" height="271" key="GridCell.Tab.0.right/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1608651816672" />
-    <state width="1458" height="271" key="GridCell.Tab.0.right/0.0.2560.1409@0.0.2560.1409" timestamp="1608728151742" />
+    <state width="1458" height="178" key="GridCell.Tab.0.right/0.0.2560.1409@0.0.2560.1409" timestamp="1609170611379" />
     <state width="1458" height="259" key="GridCell.Tab.0.right/3000.0.2560.1400/0.0.1500.970@3000.0.2560.1400" timestamp="1608300473141" />
+    <state x="3433" y="190" key="SettingsEditor" timestamp="1609679578903">
+      <screen x="3000" y="0" width="2560" height="1409" />
+    </state>
+    <state x="254" y="131" key="SettingsEditor/0.0.1500.970/3000.0.1920.1050@0.0.1500.970" timestamp="1609564427842" />
+    <state x="3433" y="190" key="SettingsEditor/0.0.1500.970/3000.0.2560.1409@3000.0.2560.1409" timestamp="1609679578903" />
     <state x="-7" y="-7" width="1067" height="1415" key="dock-window-1" timestamp="1609084177015">
       <screen x="0" y="0" width="1500" height="970" />
     </state>
